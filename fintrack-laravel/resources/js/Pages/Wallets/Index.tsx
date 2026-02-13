@@ -73,7 +73,13 @@ export default function WalletsIndex({ auth, wallets }: PageProps<{ wallets: Wal
         }
     };
 
-    const totalBalance = wallets.reduce((sum, w) => sum + parseFloat(w.balance.toString()), 0);
+    const safeParseFloat = (val: string | number | undefined | null) => {
+        if (val === undefined || val === null) return 0;
+        if (typeof val === 'number') return val;
+        return parseFloat(val.toString()) || 0;
+    };
+
+    const totalBalance = wallets.reduce((sum, w) => sum + safeParseFloat(w.balance), 0);
 
     const getWalletGradient = (type: string) => {
         switch (type) {
@@ -83,14 +89,6 @@ export default function WalletsIndex({ auth, wallets }: PageProps<{ wallets: Wal
             default: return 'from-slate-600 to-slate-800';
         }
     };
-
-    // ... (lines 87-94 skipped)
-
-    // ... inside map
-    <div>
-        <p className="text-[10px] font-medium opacity-60 uppercase tracking-widest mb-0.5">Saldo</p>
-        <p className="text-2xl font-bold">{formatIDR(parseFloat(wallet.balance.toString()))}</p>
-    </div>
 
     const getWalletIcon = (type: string) => {
         switch (type) {
@@ -156,7 +154,7 @@ export default function WalletsIndex({ auth, wallets }: PageProps<{ wallets: Wal
                                 <div className="relative z-10 flex justify-between items-end">
                                     <div>
                                         <p className="text-[10px] font-medium opacity-60 uppercase tracking-widest mb-0.5">Saldo</p>
-                                        <p className="text-2xl font-bold">{formatIDR(parseFloat(wallet.balance.toString()))}</p>
+                                        <p className="text-2xl font-bold">{formatIDR(safeParseFloat(wallet.balance))}</p>
                                     </div>
                                     {/* Action buttons on hover */}
                                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
