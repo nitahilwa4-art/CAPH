@@ -366,8 +366,8 @@ export default function Dashboard({
                                                 key={filter}
                                                 onClick={() => handleFilterChange(filter)}
                                                 className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap active:scale-95 ${activeFilter === filter
-                                                        ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                                                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                                                    ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                                                     }`}
                                             >
                                                 {filter === 'DAILY' ? 'Harian' : filter === 'WEEKLY' ? 'Mingguan' : filter === 'MONTHLY' ? 'Bulanan' : filter === 'YEARLY' ? 'Tahunan' : 'Custom'}
@@ -574,7 +574,7 @@ export default function Dashboard({
 
             {/* Modern Add Transaction Modal */}
             {isAddModalOpen && (
-                <div className="fixed inset-0 z-[999] flex items-end sm:items-center justify-center p-0 sm:p-6 animate-fade-in">
+                <div className="fixed inset-0 z-[999] flex items-end sm:items-center justify-center p-0 sm:p-6 pb-16 lg:pb-0 animate-fade-in">
                     <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity" onClick={() => setIsAddModalOpen(false)} />
                     <div className="relative w-full max-w-md glass-card rounded-t-[2rem] sm:rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-pop-in">
                         {/* Gradient top bar */}

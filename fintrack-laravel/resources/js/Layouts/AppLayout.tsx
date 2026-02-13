@@ -6,7 +6,7 @@ import {
     Target, Gem, CreditCard, Tags, User as UserIcon,
     Settings, FileDown, Bell, HelpCircle, Menu, X,
     ShieldCheck, Check, AlertTriangle, Info, CheckCircle,
-    Sun, Moon
+    Sun, Moon, MoreHorizontal
 } from 'lucide-react';
 import { User } from '@/types';
 
@@ -309,11 +309,49 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
                 </header>
 
                 {/* Page Content */}
-                <div className="flex-1 overflow-y-auto p-6 lg:px-10 lg:pb-10 scroll-smooth">
+                <div className="flex-1 overflow-y-auto p-6 pb-24 lg:px-10 lg:pb-10 scroll-smooth">
                     <div className="max-w-7xl mx-auto w-full animate-fade-in-up">
                         {children}
                     </div>
                 </div>
+
+                {/* Mobile Bottom Navigation Bar */}
+                <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
+                    <div className="glass border-t border-slate-200/50 dark:border-slate-700/50 px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
+                        <div className="flex items-center justify-around">
+                            {[
+                                { href: route('dashboard'), icon: LayoutDashboard, label: 'Home', active: currentRoute === 'dashboard' },
+                                { href: route('transactions.index'), icon: List, label: 'Riwayat', active: currentRoute?.startsWith('transactions') ?? false },
+                                { href: route('smart-entry.index'), icon: Zap, label: 'AI Input', active: currentRoute?.startsWith('smart-entry') ?? false },
+                                { href: route('wallets.index'), icon: CreditCard, label: 'Dompet', active: currentRoute?.startsWith('wallets') ?? false },
+                            ].map((item) => (
+                                <Link
+                                    key={item.label}
+                                    href={item.href}
+                                    className={`flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all duration-300 min-w-[60px] ${item.active
+                                            ? 'text-indigo-600 dark:text-indigo-400'
+                                            : 'text-slate-400 dark:text-slate-500 active:text-indigo-600 dark:active:text-indigo-400'
+                                        }`}
+                                >
+                                    <div className="relative">
+                                        <item.icon className={`w-5 h-5 transition-transform duration-300 ${item.active ? 'scale-110' : ''}`} />
+                                        {item.active && (
+                                            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-indigo-600 dark:bg-indigo-400" />
+                                        )}
+                                    </div>
+                                    <span className={`text-[10px] font-semibold mt-0.5 ${item.active ? 'font-bold' : ''}`}>{item.label}</span>
+                                </Link>
+                            ))}
+                            <button
+                                onClick={() => setIsSidebarOpen(true)}
+                                className="flex flex-col items-center justify-center py-1.5 px-3 rounded-xl transition-all duration-300 min-w-[60px] text-slate-400 dark:text-slate-500 active:text-indigo-600 dark:active:text-indigo-400"
+                            >
+                                <MoreHorizontal className="w-5 h-5" />
+                                <span className="text-[10px] font-semibold mt-0.5">Menu</span>
+                            </button>
+                        </div>
+                    </div>
+                </nav>
             </main>
         </div>
     );
