@@ -13,6 +13,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\SystemLogController;
+use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
+use App\Http\Controllers\Admin\MasterDataController;
 use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
@@ -90,6 +92,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/users/{user}/suspend', [UserManagementController::class, 'suspend'])->name('users.suspend');
         Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
         Route::get('/logs', [SystemLogController::class, 'index'])->name('logs.index');
+        
+        // Admin Transactions
+        Route::get('/transactions', [AdminTransactionController::class, 'index'])->name('transactions.index');
+
+        // Admin Master Data
+        Route::get('/master', [MasterDataController::class, 'index'])->name('master.index');
+        Route::post('/master/seed', [MasterDataController::class, 'seed'])->name('master.seed');
+        Route::post('/master/categories', [MasterDataController::class, 'storeCategory'])->name('master.categories.store');
+        Route::put('/master/categories/{category}', [MasterDataController::class, 'updateCategory'])->name('master.categories.update');
+        Route::delete('/master/categories/{category}', [MasterDataController::class, 'destroyCategory'])->name('master.categories.destroy');
     });
 });
 

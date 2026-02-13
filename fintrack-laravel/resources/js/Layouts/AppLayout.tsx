@@ -6,8 +6,9 @@ import {
     Target, Gem, CreditCard, Tags, User as UserIcon,
     Settings, FileDown, Bell, HelpCircle, Menu, X,
     ShieldCheck, Check, AlertTriangle, Info, CheckCircle,
-    Sun, Moon, MoreHorizontal
-} from 'lucide-react';
+    Sun, Moon, MoreHorizontal, Users, FileText, Database, ArrowRightLeft
+}
+    from 'lucide-react';
 import { User } from '@/types';
 
 interface LayoutProps {
@@ -197,7 +198,12 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
                                 <div className="animate-slide-in-right" style={{ animationDelay: '0.4s' }}>
                                     <p className="px-4 text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3">Sistem</p>
                                     <div className="space-y-1">
-                                        <NavItem href={route('admin.dashboard')} icon={ShieldCheck} label="Admin Panel" active={currentRoute?.startsWith('admin') ?? false} />
+                                        <NavItem
+                                            href={route('admin.dashboard')}
+                                            icon={ShieldCheck}
+                                            label="Admin Panel"
+                                            active={currentRoute?.startsWith('admin.') ?? false}
+                                        />
                                     </div>
                                 </div>
                             )}
@@ -226,13 +232,13 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
                             </div>
                         </div>
                     </div>
-                </div>
-            </aside>
+                </div >
+            </aside >
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col h-full overflow-hidden relative">
+            < main className="flex-1 flex flex-col h-full overflow-hidden relative" >
                 {/* Glassmorphism Header */}
-                <header className="h-20 lg:h-24 flex items-center justify-between px-6 lg:px-10 z-20 sticky top-0 glass transition-colors">
+                < header className="h-20 lg:h-24 flex items-center justify-between px-6 lg:px-10 z-20 sticky top-0 glass transition-colors" >
                     <div className="flex items-center gap-4 lg:gap-0">
                         <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 mr-2 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800 rounded-xl shadow-sm transition-all active:scale-95">
                             <Menu className="w-6 h-6" />
@@ -335,17 +341,17 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
                             <HelpCircle className="w-5 h-5" />
                         </Link>
                     </div>
-                </header>
+                </header >
 
                 {/* Page Content */}
-                <div className="flex-1 overflow-y-auto p-6 pb-24 lg:px-10 lg:pb-10 scroll-smooth">
+                < div className="flex-1 overflow-y-auto p-6 pb-24 lg:px-10 lg:pb-10 scroll-smooth" >
                     <div className="max-w-7xl mx-auto w-full animate-fade-in-up">
                         {children}
                     </div>
-                </div>
+                </div >
 
                 {/* Mobile Bottom Navigation Bar */}
-                <nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden">
+                < nav className="fixed bottom-0 left-0 right-0 z-40 lg:hidden" >
                     <div className="glass border-t border-slate-200/50 dark:border-slate-700/50 px-2 pt-2 pb-[env(safe-area-inset-bottom,8px)]">
                         <div className="flex items-center justify-around">
                             {[
@@ -380,8 +386,8 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
                             </button>
                         </div>
                     </div>
-                </nav>
-            </main>
-        </div>
+                </nav >
+            </main >
+        </div >
     );
 }

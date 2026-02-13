@@ -56,6 +56,7 @@ class AdminDashboardController extends Controller
             ]);
 
         return Inertia::render('Admin/Dashboard', [
+            'tab' => 'overview',
             'stats' => [
                 'totalUsers' => $totalUsers,
                 'activeUsers' => $activeUsers,

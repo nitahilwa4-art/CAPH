@@ -32,7 +32,8 @@ class UserManagementController extends Controller
 
         $users = $query->orderBy('created_at', 'desc')->paginate(20);
 
-        return Inertia::render('Admin/Users/Index', [
+        return Inertia::render('Admin/Dashboard', [
+            'tab' => 'users',
             'users' => $users,
             'filters' => $request->only(['search', 'role', 'status']),
         ]);

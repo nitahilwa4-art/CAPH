@@ -43,7 +43,8 @@ class SystemLogController extends Controller
             ];
         });
 
-        return Inertia::render('Admin/Logs/Index', [
+        return Inertia::render('Admin/Dashboard', [
+            'tab' => 'logs',
             'logs' => $logs,
             'filters' => $request->only(['action', 'admin_id', 'date_from', 'date_to']),
         ]);
