@@ -6,7 +6,7 @@ import {
     Plus, Sparkles, TrendingUp, TrendingDown, Wallet as WalletIcon,
     ArrowUpRight, ArrowDownRight, BarChart3, Target,
     CalendarClock, AlertTriangle, ChevronDown, X, ArrowRightLeft,
-    Filter, Calendar, PieChart as PieChartIcon
+    Filter, Calendar, PieChart as PieChartIcon, Tag as TagIcon
 } from 'lucide-react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -134,8 +134,15 @@ interface PieData {
     value: number;
 }
 
+interface TopTagData {
+    name: string;
+    total: number;
+    color: string | null;
+    percentage: number;
+}
+
 export default function Dashboard({
-    auth, stats, trendData: transactions, pieData, budgetProgress, recentTransactions, wallets, upcomingBills, categories, userTags, filters
+    auth, stats, trendData: transactions, pieData, budgetProgress, recentTransactions, wallets, upcomingBills, topTags, categories, userTags, filters
 }: PageProps<{
     stats: Stats;
     trendData: TrendData[];
@@ -144,6 +151,7 @@ export default function Dashboard({
     recentTransactions: Transaction[];
     wallets: WalletData[];
     upcomingBills: Debt[];
+    topTags: TopTagData[];
     categories: CategoryData[];
     userTags: TagData[];
     filters: { startDate: string; endDate: string; mode: string; pieStartDate?: string; pieEndDate?: string };
@@ -592,7 +600,7 @@ export default function Dashboard({
                 </div>
 
                 {/* Widgets Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Budget Watch */}
                     <div className="glass-card p-6 rounded-[2rem] flex flex-col transition-all hover:shadow-lg duration-500 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
                         <div className="flex items-center justify-between mb-4">
@@ -687,6 +695,48 @@ export default function Dashboard({
                             ) : (
                                 <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
                                     Belum ada transaksi
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Top Expense Tags */}
+                    <div className="glass-card p-6 rounded-[2rem] flex flex-col transition-all hover:shadow-lg duration-500 animate-fade-in-up" style={{ animationDelay: '900ms' }}>
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
+                                <TagIcon className="w-5 h-5 mr-2 text-violet-500" /> Fokus Pengeluaran
+                            </h3>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Bulan Ini</span>
+                        </div>
+                        <div className="space-y-4 flex-1">
+                            {topTags.length > 0 ? (
+                                topTags.map((tag, idx) => {
+                                    const tagColor = tag.color || ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6'][idx % 5];
+                                    return (
+                                        <div key={tag.name}>
+                                            <div className="flex justify-between items-center mb-1.5">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: tagColor }} />
+                                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[140px]">{tag.name}</span>
+                                                </div>
+                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{formatShortIDR(tag.total)}</span>
+                                            </div>
+                                            <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                <div
+                                                    className="h-full rounded-full transition-all duration-1000 ease-out"
+                                                    style={{ width: `${tag.percentage}%`, backgroundColor: tagColor }}
+                                                />
+                                            </div>
+                                            <div className="flex justify-end mt-0.5">
+                                                <span className="text-[10px] text-slate-400 font-bold">{tag.percentage}%</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            ) : (
+                                <div className="flex flex-col items-center justify-center flex-1 text-slate-300 dark:text-slate-600 py-8">
+                                    <TagIcon className="w-12 h-12 mb-2 opacity-20" />
+                                    <p className="text-sm font-medium">Belum ada pengeluaran bertag bulan ini</p>
                                 </div>
                             )}
                         </div>

@@ -70,6 +70,26 @@ class DashboardController extends Controller
             ->get()
             ->map(fn($item) => ['name' => $item->name, 'value' => (float) $item->value]);
 
+        // --- Top 5 Expense Tags (Current Month - FIXED) ---
+        $topTags = \DB::table('transaction_tag')
+            ->join('transactions', 'transactions.id', '=', 'transaction_tag.transaction_id')
+            ->join('tags', 'tags.id', '=', 'transaction_tag.tag_id')
+            ->where('transactions.user_id', $user->id)
+            ->where('transactions.type', 'EXPENSE')
+            ->whereNull('transactions.deleted_at')
+            ->whereBetween('transactions.date', [$fixedStartDate, $fixedEndDate])
+            ->select('tags.name', 'tags.color', \DB::raw('SUM(transactions.amount) as total'))
+            ->groupBy('tags.name', 'tags.color')
+            ->orderByDesc('total')
+            ->limit(5)
+            ->get()
+            ->map(fn($item) => [
+                'name' => $item->name,
+                'total' => (float) $item->total,
+                'color' => $item->color,
+                'percentage' => $totalExpense > 0 ? round(($item->total / $totalExpense) * 100, 1) : 0,
+            ]);
+
         // Budget progress (Keep existing logic or optimize)
         $budgets = Budget::where('user_id', $user->id)->get();
         // ... (reuse existing budget logic, it queries inside loop but it's okay for < 20 budgets)
@@ -125,6 +145,7 @@ class DashboardController extends Controller
             'recentTransactions' => $recentTransactions,
             'wallets' => $wallets,
             'upcomingBills' => $upcomingBills,
+            'topTags' => $topTags,
             'categories' => $categories,
             'userTags' => $userTags,
             'filters' => [
