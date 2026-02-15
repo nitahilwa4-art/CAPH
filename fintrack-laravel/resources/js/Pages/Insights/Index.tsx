@@ -120,13 +120,43 @@ export default function InsightsIndex({ auth, transactionCount, hasProfile }: Pa
     const [isLoading, setIsLoading] = useState(false);
     const [insight, setInsight] = useState<InsightData | null>(null);
 
+    // Period Filter State
+    const [period, setPeriod] = useState<'THIS_MONTH' | 'LAST_MONTH' | 'CUSTOM'>('THIS_MONTH');
+    const [customStart, setCustomStart] = useState('');
+    const [customEnd, setCustomEnd] = useState('');
+
     const handleGenerate = async () => {
         setIsLoading(true);
         try {
-            const response = await window.axios.post(route('insights.generate'));
-            const result = response.data;
-            console.log('AI Insight Response:', result);
+            // Determine dates based on period
+            let startDate, endDate;
+            const now = new Date();
 
+            if (period === 'THIS_MONTH') {
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            } else if (period === 'LAST_MONTH') {
+                startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+            } else {
+                if (!customStart || !customEnd) {
+                    toast.error('Pilih tanggal mulai dan selesai');
+                    setIsLoading(false);
+                    return;
+                }
+                startDate = new Date(customStart);
+                endDate = new Date(customEnd);
+            }
+
+            // Format YYYY-MM-DD
+            const formatDate = (d: Date) => d.toISOString().split('T')[0];
+
+            const response = await window.axios.post(route('insights.generate'), {
+                startDate: formatDate(startDate),
+                endDate: formatDate(endDate)
+            });
+
+            const result = response.data;
             if (result.success) {
                 setInsight(result.insight);
                 toast.success('Analisis selesai!');
@@ -162,9 +192,52 @@ export default function InsightsIndex({ auth, transactionCount, hasProfile }: Pa
                             <Sparkles className="w-8 h-8" />
                         </div>
                         <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Financial Health Check</h2>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-2">
-                            AI akan menganalisis <strong>{transactionCount}</strong> transaksi bulan ini + tren 6 bulan terakhir.
+                        <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
+                            AI akan menganalisis transaksi periode <strong>{period === 'THIS_MONTH' ? 'Bulan Ini' : period === 'LAST_MONTH' ? 'Bulan Lalu' : 'Kustom'}</strong> + bandingkan dengan tren historis.
                         </p>
+
+                        {/* Period Selector */}
+                        <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-6">
+                            <div className="flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
+                                <button
+                                    onClick={() => setPeriod('THIS_MONTH')}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${period === 'THIS_MONTH' ? 'bg-white dark:bg-slate-700 shadow text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700'}`}
+                                >
+                                    Bulan Ini
+                                </button>
+                                <button
+                                    onClick={() => setPeriod('LAST_MONTH')}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${period === 'LAST_MONTH' ? 'bg-white dark:bg-slate-700 shadow text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700'}`}
+                                >
+                                    Bulan Lalu
+                                </button>
+                                <button
+                                    onClick={() => setPeriod('CUSTOM')}
+                                    className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${period === 'CUSTOM' ? 'bg-white dark:bg-slate-700 shadow text-indigo-600 dark:text-indigo-400' : 'text-slate-500 hover:text-slate-700'}`}
+                                >
+                                    Custom
+                                </button>
+                            </div>
+
+                            {period === 'CUSTOM' && (
+                                <div className="flex items-center gap-2 animate-fade-in">
+                                    <input
+                                        type="date"
+                                        value={customStart}
+                                        onChange={(e) => setCustomStart(e.target.value)}
+                                        className="bg-white dark:bg-slate-800 border-none rounded-xl text-xs px-3 py-2 outline-none ring-1 ring-slate-200 dark:ring-slate-700 focus:ring-indigo-500"
+                                    />
+                                    <span className="text-slate-400">-</span>
+                                    <input
+                                        type="date"
+                                        value={customEnd}
+                                        onChange={(e) => setCustomEnd(e.target.value)}
+                                        className="bg-white dark:bg-slate-800 border-none rounded-xl text-xs px-3 py-2 outline-none ring-1 ring-slate-200 dark:ring-slate-700 focus:ring-indigo-500"
+                                    />
+                                </div>
+                            )}
+                        </div>
+
                         {!hasProfile && (
                             <p className="text-xs text-amber-500 mb-4 flex items-center justify-center gap-1">
                                 <AlertTriangle className="w-3 h-3" /> Isi Profil Finansial di Pengaturan untuk hasil lebih akurat
@@ -312,11 +385,11 @@ export default function InsightsIndex({ auth, transactionCount, hasProfile }: Pa
                         </div>
 
                         {/* ── 3. GOAL PROJECTIONS ── */}
-                        {insight.goalProjections.length > 0 && (
-                            <div className="glass-card p-6 rounded-[2rem] animate-fade-in-up" style={{ animationDelay: '300ms' }}>
-                                <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center mb-4">
-                                    <Target className="w-5 h-5 mr-2 text-violet-500" /> Proyeksi Goal
-                                </h3>
+                        <div className="glass-card p-6 rounded-[2rem] animate-fade-in-up" style={{ animationDelay: '300ms' }}>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center mb-4">
+                                <Target className="w-5 h-5 mr-2 text-violet-500" /> Proyeksi Goal
+                            </h3>
+                            {insight.goalProjections.length > 0 ? (
                                 <div className="space-y-4">
                                     {insight.goalProjections.map((goal) => {
                                         const gc = goalStatusConfig[goal.status] || goalStatusConfig.DELAYED;
@@ -359,15 +432,21 @@ export default function InsightsIndex({ auth, transactionCount, hasProfile }: Pa
                                         );
                                     })}
                                 </div>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl text-center border-2 border-dashed border-slate-200 dark:border-slate-700">
+                                    <Target className="w-8 h-8 mx-auto text-slate-300 mb-2" />
+                                    <p className="text-sm font-bold text-slate-600 dark:text-slate-400">Belum ada Goals</p>
+                                    <p className="text-xs text-slate-500 mb-0">Tambahkan target finansial di Profil untuk melihat proyeksi.</p>
+                                </div>
+                            )}
+                        </div>
 
                         {/* ── 4. SPENDING ALERTS ── */}
-                        {insight.spendingAlerts.length > 0 && (
-                            <div className="glass-card p-6 rounded-[2rem] animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-                                <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center mb-4">
-                                    <AlertTriangle className="w-5 h-5 mr-2 text-amber-500" /> Spending Alerts
-                                </h3>
+                        <div className="glass-card p-6 rounded-[2rem] animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center mb-4">
+                                <AlertTriangle className="w-5 h-5 mr-2 text-amber-500" /> Spending Alerts
+                            </h3>
+                            {insight.spendingAlerts.length > 0 ? (
                                 <div className="space-y-3">
                                     {insight.spendingAlerts.map((alert) => (
                                         <div
@@ -398,15 +477,25 @@ export default function InsightsIndex({ auth, transactionCount, hasProfile }: Pa
                                         </div>
                                     ))}
                                 </div>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="p-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-2xl flex items-center gap-4">
+                                    <div className="w-10 h-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-full flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                                        <CheckCircle2 className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-800 dark:text-white">Pengeluaran Terkendali!</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">Tidak ada lonjakan signifikan dibanding rata-rata 6 bulan Anda.</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
 
                         {/* ── 5. ACTION PLAN ── */}
-                        {insight.actionItems.length > 0 && (
-                            <div className="glass-card p-6 rounded-[2rem] animate-fade-in-up" style={{ animationDelay: '500ms' }}>
-                                <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center mb-4">
-                                    <CheckCircle2 className="w-5 h-5 mr-2 text-emerald-500" /> Action Plan
-                                </h3>
+                        <div className="glass-card p-6 rounded-[2rem] animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center mb-4">
+                                <CheckCircle2 className="w-5 h-5 mr-2 text-emerald-500" /> Action Plan
+                            </h3>
+                            {insight.actionItems.length > 0 ? (
                                 <div className="space-y-3">
                                     {insight.actionItems.map((item) => (
                                         <div key={item.priority} className="flex items-start gap-4 p-4 border border-slate-100 dark:border-slate-700 rounded-2xl hover:shadow-md transition-shadow">
@@ -430,8 +519,12 @@ export default function InsightsIndex({ auth, transactionCount, hasProfile }: Pa
                                         </div>
                                     ))}
                                 </div>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-2xl text-center">
+                                    <p className="text-sm text-slate-500">Momentum Anda bagus. Pertahankan!</p>
+                                </div>
+                            )}
+                        </div>
                     </>
                 )}
             </div>

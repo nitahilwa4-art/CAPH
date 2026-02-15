@@ -115,6 +115,9 @@ Kembalikan array objek JSON dengan properti:
 === TOP KATEGORI BULAN INI ===
 {$contextData['topCategories']}
 
+=== RATA-RATA PER KATEGORI (6 BULAN TERAKHIR) ===
+{$contextData['categoryAverages']}
+
 === TUGAS ===
 Analisis semua data di atas dan kembalikan JSON dengan struktur PERSIS seperti ini:
 
@@ -175,6 +178,7 @@ PENTING:
 - SEMUA teks dalam Bahasa Indonesia.
 - Jika tidak cukup data untuk suatu field, beri estimasi terbaik.
 - Jika user belum punya goal, kembalikan goalProjections sebagai array kosong [].
+- actionItems HARUS ada minimal 3 item, apapun kondisinya.
 - JSON HARUS valid. Jangan tambahkan komentar atau teks di luar JSON.";
 
             $apiKey = env('GEMINI_API_KEY');
