@@ -79,9 +79,15 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile/financial', [ProfileController::class, 'updateFinancialProfile'])->name('profile.financial');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    // Settings, Export, Notifications, Help (frontend-only pages)
+    // Export
+    Route::get('/export', fn () => \Inertia\Inertia::render('Export/Index', [
+        'wallets' => $wallets = \App\Models\Wallet::where('user_id', auth()->id())->get(['id', 'name']),
+    ]))->name('export.index');
+    Route::get('/export/preview', [\App\Http\Controllers\ExportController::class, 'preview'])->name('export.preview');
+    Route::get('/export/download', [\App\Http\Controllers\ExportController::class, 'download'])->name('export.download');
+
+    // Settings, Notifications, Help (frontend-only pages)
     Route::get('/settings', fn () => \Inertia\Inertia::render('Settings/Index'))->name('settings.index');
-    Route::get('/export', fn () => \Inertia\Inertia::render('Export/Index'))->name('export.index');
     Route::get('/notifications-page', [NotificationController::class, 'page'])->name('notifications.page');
     Route::get('/help', fn () => \Inertia\Inertia::render('Help/Index'))->name('help.index');
     
