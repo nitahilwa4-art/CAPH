@@ -4,19 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\Wallet;
 use App\Models\Category;
-use App\Services\GeminiService;
+use App\Services\GroqService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SmartEntryController extends Controller
 {
-    protected $geminiService;
+    protected $groqService;
     protected $transactionService;
 
-    public function __construct(GeminiService $geminiService, TransactionService $transactionService)
+    public function __construct(GroqService $groqService, TransactionService $transactionService)
     {
-        $this->geminiService = $geminiService;
+        $this->groqService = $groqService;
         $this->transactionService = $transactionService;
     }
 
@@ -38,7 +38,7 @@ class SmartEntryController extends Controller
         ]);
         
         try {
-            $parsedTransactions = $this->geminiService->parseNaturalLanguageTransaction($validated['input']);
+            $parsedTransactions = $this->groqService->parseNaturalLanguageTransaction($validated['input']);
             
             return response()->json([
                 'success' => true,
