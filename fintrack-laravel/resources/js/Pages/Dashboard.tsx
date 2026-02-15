@@ -106,10 +106,18 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 interface TrendData {
+    id: number;
+    date: string;
+    type: 'INCOME' | 'EXPENSE';
+    amount: number;
+    category: string;
+}
+
+interface ChartData {
     name: string;
     Pemasukan: number;
     Pengeluaran: number;
-    date: string; // Y-m-d or formatted
+    fullDate?: string;
 }
 
 interface PieData {
@@ -118,7 +126,7 @@ interface PieData {
 }
 
 export default function Dashboard({
-    auth, stats, trendData, pieData, budgetProgress, recentTransactions, wallets, upcomingBills, categories, userTags, filters
+    auth, stats, trendData: transactions, pieData, budgetProgress, recentTransactions, wallets, upcomingBills, categories, userTags, filters
 }: PageProps<{
     stats: Stats;
     trendData: TrendData[];
@@ -171,12 +179,111 @@ export default function Dashboard({
 
     // --- QUERY STATE ---
     const [activeFilter, setActiveFilter] = useState<string>(filters.mode);
+    const [trendCategory, setTrendCategory] = useState<string>('ALL');
 
     // Helper
     const getLocalDateString = (date: Date = new Date()) => {
         const offset = date.getTimezoneOffset() * 60000;
         return new Date(date.getTime() - offset).toISOString().split('T')[0];
     };
+
+    // --- CLIENT-SIDE AGGREGATION ---
+    const chartData = useMemo(() => {
+        const start = new Date(filters.startDate);
+        const end = new Date(filters.endDate);
+        const data: ChartData[] = [];
+
+        // Helper to filter transactions in a specific date range [s, e]
+        const sumInRange = (s: Date, e: Date) => {
+            const sStr = getLocalDateString(s);
+            const eStr = getLocalDateString(e);
+
+            const inRange = transactions.filter(t => {
+                // Fix: Compare only date part (YYYY-MM-DD)
+                const tDate = t.date.substring(0, 10);
+                const dateMatch = tDate >= sStr && tDate <= eStr;
+                const categoryMatch = trendCategory === 'ALL' || t.category === trendCategory;
+                return dateMatch && categoryMatch;
+            });
+
+            return {
+                income: inRange.filter(t => t.type === 'INCOME').reduce((acc, t) => acc + Number(t.amount), 0),
+                expense: inRange.filter(t => t.type === 'EXPENSE').reduce((acc, t) => acc + Number(t.amount), 0)
+            };
+        };
+
+        if (filters.mode === 'DAILY') {
+            // Loop daily
+            for (let d = new Date(start.getTime()); d.getTime() <= end.getTime(); d.setDate(d.getDate() + 1)) {
+                const dayKey = getLocalDateString(d);
+                const dayLabel = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+                const sums = sumInRange(d, d);
+                data.push({ name: dayLabel, fullDate: dayKey, Pemasukan: sums.income, Pengeluaran: sums.expense });
+            }
+        }
+        else if (filters.mode === 'WEEKLY') {
+            // Align start to the nearest Monday or just use chunks of 7 days
+            let current = new Date(start.getTime());
+            // Let's do calendar weeks logic:
+            const day = current.getDay();
+            const diff = current.getDate() - day + (day === 0 ? -6 : 1);
+            current.setDate(diff); // Set to Monday
+
+            while (current.getTime() <= end.getTime()) {
+                const weekStart = new Date(current.getTime());
+                const weekEnd = new Date(current.getTime());
+                weekEnd.setDate(weekEnd.getDate() + 6);
+
+                // Only add if there is some overlap with the selected range
+                if (weekEnd.getTime() >= start.getTime()) {
+                    const label = `${weekStart.getDate()} ${weekStart.toLocaleDateString('id-ID', { month: 'short' })}`;
+                    const sums = sumInRange(weekStart, weekEnd);
+                    data.push({ name: label, Pemasukan: sums.income, Pengeluaran: sums.expense });
+                }
+
+                current.setDate(current.getDate() + 7);
+            }
+        }
+        else if (filters.mode === 'MONTHLY') {
+            // Align to 1st of month
+            let current = new Date(start.getFullYear(), start.getMonth(), 1);
+            const endDateObj = new Date(end.getTime());
+
+            while (current.getTime() <= endDateObj.getTime()) {
+                const monthStart = new Date(current.getFullYear(), current.getMonth(), 1);
+                const monthEnd = new Date(current.getFullYear(), current.getMonth() + 1, 0);
+
+                // Check overlap
+                if (monthEnd.getTime() >= start.getTime()) {
+                    const label = current.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' });
+                    const sums = sumInRange(monthStart, monthEnd);
+                    data.push({ name: label, Pemasukan: sums.income, Pengeluaran: sums.expense });
+                }
+                current.setMonth(current.getMonth() + 1);
+            }
+        }
+        else if (filters.mode === 'YEARLY') {
+            // Align to 1st of year
+            let current = new Date(start.getFullYear(), 0, 1);
+            const endDateObj = new Date(end.getTime());
+
+            while (current.getTime() <= endDateObj.getTime()) {
+                const yearStart = new Date(current.getFullYear(), 0, 1);
+                const yearEnd = new Date(current.getFullYear(), 11, 31);
+
+                // Check overlap
+                if (yearEnd.getTime() >= start.getTime()) {
+                    const label = current.getFullYear().toString();
+                    const sums = sumInRange(yearStart, yearEnd);
+                    data.push({ name: label, Pemasukan: sums.income, Pengeluaran: sums.expense });
+                }
+                current.setFullYear(current.getFullYear() + 1);
+            }
+        }
+
+        return data;
+    }, [transactions, filters.startDate, filters.endDate, filters.mode, trendCategory]);
 
     const updateParams = (newParams: Record<string, any>) => {
         router.get(route('dashboard'), { ...filters, ...newParams }, {
@@ -190,14 +297,31 @@ export default function Dashboard({
         setActiveFilter(filter);
         if (filter === 'CUSTOM') return;
 
-        const end = new Date();
+        const now = new Date();
         let start = new Date();
+        let end = new Date();
         let mode = 'DAILY';
 
-        if (filter === 'DAILY') { start = new Date(end.getFullYear(), end.getMonth(), 1); mode = 'DAILY'; }
-        else if (filter === 'WEEKLY') { start.setMonth(end.getMonth() - 3); mode = 'WEEKLY'; }
-        else if (filter === 'MONTHLY') { start = new Date(end.getFullYear(), 0, 1); mode = 'MONTHLY'; }
-        else if (filter === 'YEARLY') { start.setFullYear(end.getFullYear() - 5); start.setMonth(0, 1); mode = 'YEARLY'; }
+        if (filter === 'DAILY') {
+            start = new Date(now.getFullYear(), now.getMonth(), 1);
+            end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            mode = 'DAILY';
+        }
+        else if (filter === 'WEEKLY') {
+            start = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+            end = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            mode = 'WEEKLY';
+        }
+        else if (filter === 'MONTHLY') {
+            start = new Date(now.getFullYear(), 0, 1);
+            end = new Date(now.getFullYear(), 11, 31);
+            mode = 'MONTHLY';
+        }
+        else if (filter === 'YEARLY') {
+            start = new Date(now.getFullYear() - 4, 0, 1);
+            end = new Date(now.getFullYear(), 11, 31);
+            mode = 'YEARLY';
+        }
 
         updateParams({
             startDate: getLocalDateString(start),
@@ -378,7 +502,7 @@ export default function Dashboard({
                         </div>
                         <div className="flex-1 w-full min-h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
@@ -390,7 +514,7 @@ export default function Dashboard({
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" className="stroke-slate-100 dark:stroke-slate-800" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} interval={trendData.length > 10 ? 'preserveStartEnd' : 0} />
+                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} interval={chartData.length > 10 ? 'preserveStartEnd' : 0} />
                                     <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} tickFormatter={formatShortIDR} />
                                     <Tooltip
                                         cursor={{ fill: 'transparent' }}

@@ -45,55 +45,13 @@ class DashboardController extends Controller
         $balance = (float) $wallets->sum('balance'); // Current balance is always real-time from wallets
         $transactionCount = Transaction::forUser($user->id)->inDateRange($startDate, $endDate)->count();
         
-        // --- Aggregation for Trend Chart ---
-        $dateFormat = match($mode) {
-            'MONTHLY' => '%Y-%m',
-            'YEARLY' => '%Y',
-            default => '%Y-%m-%d' // DAILY and WEEKLY (for now, or implement strict weekly)
-        };
-        
-        $groupCol = 'group_date';
-        $query = Transaction::forUser($user->id)
-            ->inDateRange($startDate, $endDate);
-            
-        if ($mode === 'WEEKLY') {
-            // Weekly grouping in MySQL
-            $query->selectRaw("YEARWEEK(date, 1) as group_date, type, SUM(amount) as total");
-        } else {
-             $query->selectRaw("DATE_FORMAT(date, '$dateFormat') as group_date, type, SUM(amount) as total");
-        }
-
-        $trendQuery = $query->groupBy('group_date', 'type')
-            ->orderBy('group_date')
+        // --- Raw Data for Client-Side Aggregation (Trend Chart) ---
+        // User requested client-side mechanism. Returning raw transactions in range.
+        $trendData = Transaction::forUser($user->id)
+            ->inDateRange($startDate, $endDate)
+            ->select('id', 'date', 'type', 'amount', 'category')
+            ->orderBy('date')
             ->get();
-            
-        // Process trend data
-        $groupedTrend = [];
-        foreach ($trendQuery as $item) {
-            $key = $item->group_date;
-            if (!isset($groupedTrend[$key])) {
-                $label = $key;
-                if ($mode === 'DAILY') {
-                    $label = Carbon::parse($key)->translatedFormat('d M');
-                } elseif ($mode === 'MONTHLY') {
-                     $label = Carbon::parse($key . '-01')->translatedFormat('M Y');
-                } elseif ($mode === 'YEARLY') {
-                    $label = $key;
-                } elseif ($mode === 'WEEKLY') {
-                    // key is YearWeek e.g. 202607
-                    // Need to convert to label
-                    $year = substr($key, 0, 4);
-                    $week = substr($key, 4);
-                    $date = Carbon::now()->setISODate($year, $week);
-                    $label = $date->translatedFormat('d M') . ' - ' . $date->addDays(6)->translatedFormat('d M');
-                }
-
-                $groupedTrend[$key] = ['name' => $label, 'Pemasukan' => 0, 'Pengeluaran' => 0, 'date' => $key];
-            }
-            if ($item->type === 'INCOME') $groupedTrend[$key]['Pemasukan'] = (float) $item->total;
-            if ($item->type === 'EXPENSE') $groupedTrend[$key]['Pengeluaran'] = (float) $item->total;
-        }
-        $trendData = array_values($groupedTrend);
 
         // --- Aggregation for Pie Chart (Expense by Category) ---
         $pieData = Transaction::forUser($user->id)
