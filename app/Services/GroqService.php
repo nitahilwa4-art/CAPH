@@ -13,8 +13,8 @@ class GroqService
 
     public function __construct()
     {
-        $this->apiKey = env('GROQ_API_KEY');
-        $this->model = env('GROQ_MODEL', 'llama-3.3-70b-versatile');
+        $this->apiKey = config('services.groq.key');
+        $this->model = config('services.groq.model');
     }
 
     /**
@@ -24,7 +24,7 @@ class GroqService
     {
         try {
             $today = now()->format('Y-m-d');
-            
+
             $systemPrompt = "You are a financial transaction parser. 
 Analyze the user's input and extract transaction data.
 Return ONLY a valid JSON array of objects.
@@ -50,10 +50,10 @@ NO explanations. JUST JSON.";
             // Setup stream context options to bypass cURL issues
             $options = [
                 'http' => [
-                    'header'  => "Content-type: application/json\r\n" .
-                               "Authorization: Bearer {$this->apiKey}\r\n" .
-                               "Connection: close\r\n",
-                    'method'  => 'POST',
+                    'header' => "Content-type: application/json\r\n" .
+                    "Authorization: Bearer {$this->apiKey}\r\n" .
+                    "Connection: close\r\n",
+                    'method' => 'POST',
                     'content' => json_encode([
                         'model' => $this->model,
                         'messages' => [
@@ -76,7 +76,7 @@ NO explanations. JUST JSON.";
                 ]
             ];
 
-            $context  = stream_context_create($options);
+            $context = stream_context_create($options);
             $result = file_get_contents($this->baseUrl, false, $context);
 
             if ($result === false) {
@@ -84,17 +84,17 @@ NO explanations. JUST JSON.";
                 Log::error('Groq Stream Error: ' . json_encode($error));
                 throw new \Exception('Failed to connect to Groq via Stream.');
             }
-            
+
             $data = json_decode($result, true);
-            
+
             // Check for API errors in response
             if (isset($data['error'])) {
-                 Log::error('Groq API Error: ' . json_encode($data['error']));
-                 throw new \Exception('Groq API Error: ' . ($data['error']['message'] ?? 'Unknown error'));
+                Log::error('Groq API Error: ' . json_encode($data['error']));
+                throw new \Exception('Groq API Error: ' . ($data['error']['message'] ?? 'Unknown error'));
             }
 
             $content = $data['choices'][0]['message']['content'] ?? null;
-            
+
             if (!$content) {
                 return [];
             }
@@ -112,7 +112,7 @@ NO explanations. JUST JSON.";
             if (is_array($data) && array_is_list($data)) {
                 return $data;
             }
-            
+
             // If single object, wrap in array
             if (is_array($data)) {
                 return [$data];
@@ -120,7 +120,8 @@ NO explanations. JUST JSON.";
 
             return [];
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             Log::error('Groq Parsing Error: ' . $e->getMessage());
             throw new \Exception('Gagal memproses dengan Groq AI: ' . $e->getMessage());
         }
@@ -150,17 +151,17 @@ Do not use H1 (#). Start with H2 (##) or bold text.";
             // Setup stream context options to bypass cURL issues
             $options = [
                 'http' => [
-                    'header'  => "Content-type: application/json\r\n" .
-                               "Authorization: Bearer {$this->apiKey}\r\n" .
-                               "Connection: close\r\n",
-                    'method'  => 'POST',
+                    'header' => "Content-type: application/json\r\n" .
+                    "Authorization: Bearer {$this->apiKey}\r\n" .
+                    "Connection: close\r\n",
+                    'method' => 'POST',
                     'content' => json_encode([
                         'model' => $this->model,
                         'messages' => [
                             ['role' => 'system', 'content' => $systemPrompt],
                             ['role' => 'user', 'content' => $userPrompt]
                         ],
-                        'temperature' => 0.3, 
+                        'temperature' => 0.3,
                         'max_tokens' => 1000
                     ]),
                     'ignore_errors' => true,
@@ -175,18 +176,19 @@ Do not use H1 (#). Start with H2 (##) or bold text.";
                 ]
             ];
 
-            $context  = stream_context_create($options);
+            $context = stream_context_create($options);
             $result = file_get_contents($this->baseUrl, false, $context);
 
             if ($result === false) {
                 Log::error('Groq Insight Error');
                 return "Maaf, sistem analisis sedang sibuk. Coba lagi nanti.";
             }
-            
+
             $data = json_decode($result, true);
             return $data['choices'][0]['message']['content'] ?? "Gagal mendapatkan analisis.";
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             Log::error('Groq Insight Exception: ' . $e->getMessage());
             return "Terjadi kesalahan sistem saat analisis.";
         }
