@@ -6,12 +6,12 @@ import { Search, ChevronDown, MessageCircle, Mail, HelpCircle, FileText, ShieldQ
 interface FaqItem { question: string; answer: string; category: 'GENERAL' | 'ACCOUNT' | 'TRANSACTIONS' | 'SECURITY'; }
 
 const FAQS: FaqItem[] = [
-    { category: 'GENERAL', question: 'Apa itu FinTrack AI?', answer: 'FinTrack AI adalah aplikasi manajemen keuangan pribadi yang menggunakan kecerdasan buatan (AI) untuk membantu Anda mencatat, menganalisis, dan merencanakan keuangan dengan lebih cerdas dan efisien.' },
+    { category: 'GENERAL', question: 'Apa itu CAPH.io?', answer: 'CAPH.io adalah aplikasi manajemen keuangan pribadi yang menggunakan kecerdasan buatan (AI) untuk membantu Anda mencatat, menganalisis, dan merencanakan keuangan dengan lebih cerdas dan efisien.' },
     { category: 'TRANSACTIONS', question: 'Bagaimana cara menggunakan AI Smart Entry?', answer: 'Cukup ketik transaksi Anda dalam bahasa sehari-hari di menu "Input AI". Contoh: "Makan siang nasi goreng 25rb tadi". AI kami akan otomatis mendeteksi kategori, jumlah, dan tanggal transaksi untuk Anda.' },
     { category: 'TRANSACTIONS', question: 'Apakah saya bisa mengedit transaksi yang sudah disimpan?', answer: 'Tentu saja. Pergi ke menu "Riwayat", cari transaksi yang ingin diubah, lalu klik ikon pensil (Edit) di sebelah kanan baris transaksi tersebut.' },
     { category: 'ACCOUNT', question: 'Bagaimana cara mereset password saya?', answer: 'Anda dapat mereset password melalui menu "Profil Saya" > "Ganti Password". Jika Anda lupa password saat login, silakan hubungi administrator sistem.' },
     { category: 'SECURITY', question: 'Apakah data keuangan saya aman?', answer: 'Ya, data Anda disimpan secara aman di server dan dienkripsi. Kami menyarankan Anda melakukan backup data secara berkala melalui menu Pengaturan.' },
-    { category: 'GENERAL', question: 'Apakah aplikasi ini gratis?', answer: 'Saat ini FinTrack AI dapat digunakan sepenuhnya secara gratis dengan fitur-fitur dasar dan AI integration.' },
+    { category: 'GENERAL', question: 'Apakah aplikasi ini gratis?', answer: 'Saat ini CAPH.io dapat digunakan sepenuhnya secara gratis dengan fitur-fitur dasar dan AI integration.' },
 ];
 
 const categories = [
@@ -61,7 +61,7 @@ export default function HelpCenter() {
                             <div className="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform"><Mail className="w-6 h-6" /></div>
                             <h4 className="font-bold text-slate-800 dark:text-white">Email Support</h4>
                             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 mb-3">Respon dalam 24 jam</p>
-                            <a href="mailto:support@fintrack.ai" className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">support@fintrack.ai</a>
+                            <a href="mailto:support@caph.io" className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">support@caph.io</a>
                         </div>
                         <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 hover:border-emerald-200 dark:hover:border-emerald-800 transition-all group cursor-pointer">
                             <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-xl w-fit mb-4 group-hover:scale-110 transition-transform"><MessageCircle className="w-6 h-6" /></div>

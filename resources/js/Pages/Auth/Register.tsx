@@ -22,7 +22,7 @@ export default function Register() {
 
     return (
         <>
-            <Head title="Daftar - FinTrack AI" />
+            <Head title="Daftar - CAPH.io" />
             <div className="min-h-screen flex bg-slate-950 relative overflow-hidden">
                 {/* Background */}
                 <div className="absolute inset-0">
@@ -38,7 +38,7 @@ export default function Register() {
                                 <Wallet className="w-8 h-8" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-white leading-none">FinTrack</h1>
+                                <h1 className="text-3xl font-bold text-white leading-none">CAPH.io</h1>
                                 <span className="text-xs font-bold text-indigo-400 tracking-widest uppercase">AI Powered</span>
                             </div>
                         </div>
@@ -72,7 +72,7 @@ export default function Register() {
                                 <Wallet className="w-7 h-7" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-white leading-none">FinTrack</h1>
+                                <h1 className="text-2xl font-bold text-white leading-none">CAPH.io</h1>
                                 <span className="text-[10px] font-bold text-indigo-400 tracking-widest uppercase">AI Powered</span>
                             </div>
                         </div>

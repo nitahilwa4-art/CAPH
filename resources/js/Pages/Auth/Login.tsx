@@ -27,7 +27,7 @@ export default function Login({
 
     return (
         <>
-            <Head title="Login - FinTrack AI" />
+            <Head title="Login - CAPH.io" />
             <div className="min-h-screen flex bg-slate-950 relative overflow-hidden">
                 {/* Background Elements */}
                 <div className="absolute inset-0">
@@ -44,7 +44,7 @@ export default function Login({
                                 <Wallet className="w-8 h-8" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-bold text-white leading-none">FinTrack</h1>
+                                <h1 className="text-3xl font-bold text-white leading-none">CAPH.io</h1>
                                 <span className="text-xs font-bold text-indigo-400 tracking-widest uppercase">AI Powered</span>
                             </div>
                         </div>
@@ -79,7 +79,7 @@ export default function Login({
                                 <Wallet className="w-7 h-7" />
                             </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-white leading-none">FinTrack</h1>
+                                <h1 className="text-2xl font-bold text-white leading-none">CAPH.io</h1>
                                 <span className="text-[10px] font-bold text-indigo-400 tracking-widest uppercase">AI Powered</span>
                             </div>
                         </div>
@@ -87,7 +87,7 @@ export default function Login({
                         <div className="bg-slate-900/80 backdrop-blur-xl rounded-3xl border border-slate-800 shadow-2xl p-8">
                             <div className="mb-8">
                                 <h2 className="text-2xl font-bold text-white">Selamat Datang! 👋</h2>
-                                <p className="text-slate-400 text-sm mt-1">Masuk ke akun FinTrack Anda</p>
+                                <p className="text-slate-400 text-sm mt-1">Masuk ke akun CAPH.io Anda</p>
                             </div>
 
                             {status && (
@@ -170,8 +170,8 @@ export default function Login({
                             <div className="mt-6 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
                                 <p className="text-xs font-bold text-slate-400 mb-2">🔑 Demo Login:</p>
                                 <div className="space-y-1 text-xs text-slate-500">
-                                    <p><span className="text-violet-400">Admin</span>: admin@fintrack.com / admin123</p>
-                                    <p><span className="text-emerald-400">User</span>: user@fintrack.com / user123</p>
+                                    <p><span className="text-violet-400">Admin</span>: admin@caph.io / admin123</p>
+                                    <p><span className="text-emerald-400">User</span>: user@caph.io / user123</p>
                                 </div>
                             </div>
                         </div>

@@ -35,7 +35,7 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
     // Dark mode state
     const [isDark, setIsDark] = useState(() => {
         if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem('fintrack-theme');
+            const saved = localStorage.getItem('caph-theme');
             if (saved) return saved === 'dark';
             return window.matchMedia('(prefers-color-scheme: dark)').matches;
         }
@@ -49,7 +49,7 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
         } else {
             root.classList.remove('dark');
         }
-        localStorage.setItem('fintrack-theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('caph-theme', isDark ? 'dark' : 'light');
     }, [isDark]);
 
     // Notification state
@@ -151,7 +151,7 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
                                     <WalletIcon className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <h1 className="text-xl font-bold tracking-tight text-slate-800 dark:text-white leading-none">FinTrack</h1>
+                                    <h1 className="text-xl font-bold tracking-tight text-slate-800 dark:text-white leading-none">CAPH.io</h1>
                                     <span className="text-[10px] font-bold text-indigo-500 dark:text-indigo-400 tracking-widest uppercase">AI Powered</span>
                                 </div>
                             </div>

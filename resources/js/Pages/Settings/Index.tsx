@@ -12,7 +12,7 @@ export default function Settings() {
     // Preferences
     const [theme, setTheme] = useState<'light' | 'dark'>(() => {
         if (typeof window !== 'undefined') {
-            const saved = localStorage.getItem('fintrack-theme');
+            const saved = localStorage.getItem('caph-theme');
             if (saved === 'dark') return 'dark';
             if (saved === 'light') return 'light';
             return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -88,7 +88,7 @@ export default function Settings() {
     const handleToggleTheme = () => {
         const t = theme === 'light' ? 'dark' : 'light';
         setTheme(t);
-        localStorage.setItem('fintrack-theme', t);
+        localStorage.setItem('caph-theme', t);
         if (t === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
@@ -113,12 +113,12 @@ export default function Settings() {
     };
 
     const handleBackup = () => {
-        const data = { version: '1.0', timestamp: new Date().toISOString(), note: 'FinTrack Backup' };
+        const data = { version: '1.0', timestamp: new Date().toISOString(), note: 'CAPH.io Backup' };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `FinTrack_Backup_${new Date().toISOString().split('T')[0]}.json`;
+        link.download = `CAPH_Backup_${new Date().toISOString().split('T')[0]}.json`;
         document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(url);
         toast.success('Data berhasil di-backup!');
     };
@@ -255,8 +255,8 @@ export default function Settings() {
                                 onClick={handleSaveProfile}
                                 disabled={savingProfile}
                                 className={`px-6 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all active:scale-95 ${profileDirty
-                                        ? 'bg-white text-indigo-700 hover:bg-indigo-50 shadow-lg shadow-white/20 hover:scale-105'
-                                        : 'bg-white/20 text-white/70 cursor-default'
+                                    ? 'bg-white text-indigo-700 hover:bg-indigo-50 shadow-lg shadow-white/20 hover:scale-105'
+                                    : 'bg-white/20 text-white/70 cursor-default'
                                     } disabled:opacity-50`}
                             >
                                 {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
@@ -379,7 +379,7 @@ export default function Settings() {
                     </div>
                 </div>
 
-                <div className="text-center pt-4"><p className="text-xs text-slate-400">FinTrack AI v1.2.0 with Financial Goals</p></div>
+                <div className="text-center pt-4"><p className="text-xs text-slate-400">CAPH.io v1.2.0 with Financial Goals</p></div>
             </div>
         </AppLayout>
     );
