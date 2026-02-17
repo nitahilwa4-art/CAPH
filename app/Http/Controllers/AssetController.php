@@ -17,9 +17,9 @@ class AssetController extends Controller
         $summary = [
             'totalValue' => $assets->sum('value'),
             'byType' => $assets->groupBy('type')->map(fn($group) => [
-                'count' => $group->count(),
-                'value' => $group->sum('value'),
-            ])->toArray(),
+        'count' => $group->count(),
+        'value' => $group->sum('value'),
+        ])->toArray(),
         ];
 
         return Inertia::render('Assets/Index', [
@@ -33,7 +33,7 @@ class AssetController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'value' => 'required|numeric|min:0',
-            'type' => 'required|in:GOLD,STOCK,CRYPTO,PROPERTY,OTHER',
+            'type' => 'required|in:GOLD,STOCK,CRYPTO,PROPERTY,VEHICLE,INVESTMENT,OTHER',
         ]);
 
         Asset::create([
@@ -53,7 +53,7 @@ class AssetController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'value' => 'required|numeric|min:0',
-            'type' => 'required|in:GOLD,STOCK,CRYPTO,PROPERTY,OTHER',
+            'type' => 'required|in:GOLD,STOCK,CRYPTO,PROPERTY,VEHICLE,INVESTMENT,OTHER',
         ]);
 
         $asset->update($validated);
