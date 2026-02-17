@@ -14,16 +14,10 @@ class BudgetController extends Controller
     {
         $user = $request->user();
         
-        // Eager load transactions that match the budget's category and belong to the user
-        // We filter by 'EXPENSE' type here as well to reduce data size
-        $budgets = Budget::where('user_id', $user->id)
-            ->with(['transactions' => function ($query) use ($user) {
-                $query->where('user_id', $user->id)
-                      ->where('type', 'EXPENSE');
-            }])
-            ->get();
+        // No eager loading — use direct SQL aggregation per budget instead
+        $budgets = Budget::where('user_id', $user->id)->get();
 
-        $budgetsWithProgress = $budgets->map(function ($budget) {
+        $budgetsWithProgress = $budgets->map(function ($budget) use ($user) {
             $now = Carbon::now();
             $start = null;
             $end = null;
@@ -40,12 +34,12 @@ class BudgetController extends Controller
                 $end = $now->copy()->endOfMonth()->format('Y-m-d');
             }
 
-            // Filter transactions eagerly loaded
-            // We use filter explicitly to handle Carbon date comparison with string dates safely
-            $spent = $budget->transactions->filter(function ($transaction) use ($start, $end) {
-                return $transaction->date->format('Y-m-d') >= $start && 
-                       $transaction->date->format('Y-m-d') <= $end;
-            })->sum('amount');
+            // SQL SUM: returns 1 scalar value instead of loading thousands of rows
+            $spent = Transaction::where('user_id', $user->id)
+                ->where('type', 'EXPENSE')
+                ->where('category', $budget->category)
+                ->whereBetween('date', [$start, $end])
+                ->sum('amount');
 
             return [
                 'id' => $budget->id,
