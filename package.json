@@ -29,6 +29,7 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@sentry/react": "^10.39.0",
         "lucide-react": "^0.563.0",
         "react-hot-toast": "^2.6.0",
         "react-markdown": "^10.1.0",

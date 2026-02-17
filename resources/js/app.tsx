@@ -1,5 +1,10 @@
 import '../css/app.css';
 import './bootstrap';
+import * as Sentry from "@sentry/react";
+
+Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN_PUBLIC,
+});
 
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
