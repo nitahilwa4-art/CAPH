@@ -400,8 +400,8 @@ export default function TransactionsIndex({
                                         key={i}
                                         onClick={() => router.get(link.url!, {}, { preserveState: true, preserveScroll: true })}
                                         className={`px-3 py-2 text-xs font-bold rounded-xl transition-all active:scale-95 ${link.active
-                                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
-                                                : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                            ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30'
+                                            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                                             }`}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
                                     />
@@ -446,8 +446,9 @@ export default function TransactionsIndex({
             {/* Add/Edit Modal */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 animate-fade-in">
-                    <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onClick={() => setIsModalOpen(false)} />
-                    <div className="relative w-full max-w-md glass-card rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-pop-in">
+                    <div className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity" onClick={() => setIsModalOpen(false)} />
+
+                    <div className="relative w-full max-w-md glass-card rounded-[2rem] shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-pop-in mt-96">
                         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 z-10" />
 
                         <div className="p-5 pb-0 shrink-0">

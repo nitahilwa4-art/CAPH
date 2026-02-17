@@ -36,8 +36,25 @@ class DebtController extends Controller
             'unpaidCount' => $allDebts->where('is_paid', false)->count(),
         ];
 
+        // Fetch Recurring Transactions
+        $recurring = \App\Models\RecurringTransaction::where('user_id', $user->id)
+            ->with(['wallet'])
+            ->orderBy('next_run_date', 'asc')
+            ->get();
+
+        // Separate active recurring items that are due (auto_cut = false)
+        $dueRecurring = $recurring->filter(function ($item) {
+            return $item->is_active &&
+            !$item->auto_cut &&
+            $item->next_run_date <= now();
+        })->values();
+
         return Inertia::render('Debts/Index', [
             'debts' => $debts,
+            'recurring' => $recurring,
+            'dueRecurring' => $dueRecurring,
+            'wallets' => \App\Models\Wallet::where('user_id', $user->id)->get(['id', 'name', 'balance']),
+            'categories' => \App\Models\Category::where('user_id', $user->id)->get(['id', 'name', 'type']),
             'summary' => $summary,
             'filters' => $request->only(['type', 'status']),
         ]);

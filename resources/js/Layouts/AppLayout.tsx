@@ -178,7 +178,7 @@ export default function AppLayout({ header, children }: PropsWithChildren<Layout
                                     <NavItem href={route('wallets.index')} icon={CreditCard} label="Dompet" active={currentRoute?.startsWith('wallets') ?? false} />
                                     <NavItem href={route('budgets.index')} icon={Target} label="Anggaran" active={currentRoute?.startsWith('budgets') ?? false} />
                                     <NavItem href={route('categories.index')} icon={Tags} label="Kategori" active={currentRoute?.startsWith('categories') ?? false} />
-                                    <NavItem href={route('debts.index')} icon={HandCoins} label="Hutang" active={currentRoute?.startsWith('debts') ?? false} />
+                                    <NavItem href={route('debts.index')} icon={HandCoins} label="Tagihan & Kewajiban" active={currentRoute?.startsWith('debts') ?? false} />
                                     <NavItem href={route('assets.index')} icon={Gem} label="Aset" active={currentRoute?.startsWith('assets') ?? false} />
                                 </div>
                             </div>
