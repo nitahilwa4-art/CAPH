@@ -123,6 +123,14 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
         
+        
+        // Get active recurring transactions
+        $upcomingRecurring = \App\Models\RecurringTransaction::where('user_id', $user->id)
+            ->active()
+            ->orderBy('next_run_date', 'asc')
+            ->take(5)
+            ->get();
+
         // Get user categories for standard inputs
         $categories = Category::userCategories($user->id)->get();
         $userTags = Tag::where('user_id', $user->id)->orderBy('name')->get();
@@ -141,6 +149,7 @@ class DashboardController extends Controller
             'recentTransactions' => $recentTransactions,
             'wallets' => $wallets,
             'upcomingBills' => $upcomingBills,
+            'upcomingRecurring' => $upcomingRecurring,
             'topTags' => $topTags,
             'categories' => $categories,
             'userTags' => $userTags,

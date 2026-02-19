@@ -133,8 +133,18 @@ interface TopTagData {
     percentage: number;
 }
 
+
+interface RecurringTransaction {
+    id: number;
+    name: string;
+    amount: number;
+    type: 'INCOME' | 'EXPENSE' | 'TRANSFER';
+    frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+    next_run_date: string;
+}
+
 export default function Dashboard({
-    auth, stats, trendData: chartData, pieData, budgetProgress, recentTransactions, wallets, upcomingBills, topTags, categories, userTags, filters
+    auth, stats, trendData: chartData, pieData, budgetProgress, recentTransactions, wallets, upcomingBills = [], upcomingRecurring = [], topTags, categories, userTags, filters
 }: PageProps<{
     stats: Stats;
     trendData: ChartData[];
@@ -143,6 +153,7 @@ export default function Dashboard({
     recentTransactions: Transaction[];
     wallets: WalletData[];
     upcomingBills: Debt[];
+    upcomingRecurring: RecurringTransaction[];
     topTags: TopTagData[];
     categories: CategoryData[];
     userTags: TagData[];
@@ -532,13 +543,16 @@ export default function Dashboard({
                         </WidgetWrapper>
                     </div>
 
-                    {/* Upcoming Bills */}
+
+    // ... (Stats Cards) ...
+
+                    {/* Upcoming Bills (Hutang & Piutang) */}
                     <div key="upcoming-bills">
                         <WidgetWrapper>
                             <div className="p-6 flex flex-col h-full">
                                 <div className="flex items-center justify-between mb-4 shrink-0">
                                     <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
-                                        <CalendarClock className="w-5 h-5 mr-2 text-amber-500" /> Tagihan Mendatang
+                                        <AlertTriangle className="w-5 h-5 mr-2 text-red-500" /> Hutang & Piutang
                                     </h3>
                                     <Link href={route('debts.index')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Lihat</Link>
                                 </div>
@@ -562,7 +576,47 @@ export default function Dashboard({
                                         })
                                     ) : (
                                         <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
-                                            Tidak ada tagihan
+                                            Tidak ada hutang
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </WidgetWrapper>
+                    </div>
+
+                    {/* Recurring Transactions (Tagihan Rutin) */}
+                    <div key="recurring-transactions">
+                        <WidgetWrapper>
+                            <div className="p-6 flex flex-col h-full">
+                                <div className="flex items-center justify-between mb-4 shrink-0">
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
+                                        <CalendarClock className="w-5 h-5 mr-2 text-amber-500" /> Tagihan Rutin
+                                    </h3>
+                                    <Link href={route('debts.index')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Lihat</Link>
+                                </div>
+                                <div className="space-y-3 flex-1 overflow-y-auto scrollbar-hide">
+                                    {upcomingRecurring.length > 0 ? (
+                                        upcomingRecurring.map((item) => (
+                                            <div key={item.id} className="flex items-center justify-between p-3 rounded-xl border border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-xs font-bold ${item.type === 'EXPENSE' ? 'bg-red-500' : 'bg-emerald-500'}`}>
+                                                        {item.type === 'EXPENSE' ? 'OUT' : 'IN'}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{item.name}</p>
+                                                        <p className="text-[10px] text-slate-400">
+                                                            Tgl {new Date(item.next_run_date).getDate()} • {item.frequency}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <span className={`text-sm font-bold ${item.type === 'EXPENSE' ? 'text-slate-700 dark:text-slate-300' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                                                    {formatShortIDR(item.amount)}
+                                                </span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
+                                            Tidak ada tagihan rutin
                                         </div>
                                     )}
                                 </div>

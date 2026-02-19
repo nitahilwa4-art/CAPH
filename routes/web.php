@@ -44,11 +44,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('wallets', WalletController::class)
         ->only(['index', 'store', 'update', 'destroy']);
 
-    // Recurring Transactions
-    Route::resource('recurring', RecurringTransactionController::class)
-        ->only(['index', 'store', 'update', 'destroy']);
-    Route::post('/recurring/{recurring}/process', [RecurringTransactionController::class , 'process'])->name('recurring.process');
-
     // Budgets
     Route::resource('budgets', BudgetController::class)
         ->only(['index', 'store', 'update', 'destroy']);
