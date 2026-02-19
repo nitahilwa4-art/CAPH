@@ -49,23 +49,14 @@ export default function Login({
                             </div>
                         </div>
                         <h2 className="text-4xl font-bold text-white mb-4 leading-tight">
-                            Kelola Keuangan Anda dengan <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">AI Cerdas</span>
+                            {/* Kelola Keuangan Anda dengan <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">AI</span> */}
                         </h2>
                         <p className="text-lg text-slate-400 mb-8">
-                            Catat transaksi dengan bahasa natural, dapatkan insight keuangan otomatis, dan raih financial goal Anda.
+
                         </p>
 
                         <div className="space-y-4">
-                            {[
-                                { emoji: '🤖', text: 'Input transaksi dengan AI — cukup ketik bahasa sehari-hari' },
-                                { emoji: '📊', text: 'Dashboard real-time dengan analisis pengeluaran' },
-                                { emoji: '🎯', text: 'Budget tracking & financial insights personal' },
-                            ].map((feature, i) => (
-                                <div key={i} className="flex items-center gap-3 text-slate-300">
-                                    <span className="text-xl">{feature.emoji}</span>
-                                    <span className="text-sm">{feature.text}</span>
-                                </div>
-                            ))}
+
                         </div>
                     </div>
                 </div>
@@ -170,8 +161,8 @@ export default function Login({
                             <div className="mt-6 p-4 bg-slate-800/50 rounded-xl border border-slate-700/50">
                                 <p className="text-xs font-bold text-slate-400 mb-2">🔑 Demo Login:</p>
                                 <div className="space-y-1 text-xs text-slate-500">
-                                    <p><span className="text-violet-400">Admin</span>: admin@caph.io / admin123</p>
-                                    <p><span className="text-emerald-400">User</span>: user@caph.io / user123</p>
+                                    <p><span className="text-violet-400">Admin</span>: admin@fintrack.com / admin123</p>
+                                    <p><span className="text-emerald-400">User</span>: user@fintrack.com / user123</p>
                                 </div>
                             </div>
                         </div>

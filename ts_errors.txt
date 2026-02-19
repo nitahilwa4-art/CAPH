@@ -1,0 +1,19 @@
+resources/js/Components/DashboardGrid.tsx(3,27): error TS2307: Cannot find module 'react-grid-layout/lib/components/WidthProvider' or its corresponding type declarations.
+resources/js/Components/DashboardGrid.tsx(18,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(19,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(20,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(21,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(22,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(23,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(26,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(27,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(28,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(29,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(30,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(31,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(34,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(35,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(36,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(37,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(38,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.
+resources/js/Components/DashboardGrid.tsx(39,11): error TS2353: Object literal may only specify known properties, and 'i' does not exist in type 'readonly LayoutItem[]'.

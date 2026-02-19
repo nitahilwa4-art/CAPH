@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import toast, { Toaster } from 'react-hot-toast';
 import TagInput from '@/Components/TagInput';
+import DashboardGrid, { WidgetWrapper } from '@/Components/DashboardGrid';
 
 interface TagData {
     id: number;
@@ -382,261 +383,275 @@ export default function Dashboard({
                     </div>
                 </div>
 
-                {/* Charts */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-auto lg:h-[500px]">
+                {/* Draggable & Resizable Grid */}
+                <DashboardGrid>
                     {/* Trend Bar Chart */}
-                    <div className="lg:col-span-2 glass-card p-6 lg:p-8 rounded-[2rem] flex flex-col transition-all hover:shadow-lg duration-500 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
-                        <div className="flex flex-col justify-between mb-6 gap-4">
-                            <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-xl">
-                                        <BarChart3 className="w-5 h-5" />
+                    <div key="trend-chart">
+                        <WidgetWrapper>
+                            <div className="p-6 lg:p-8 flex flex-col h-full">
+                                <div className="flex flex-col justify-between mb-4 gap-3 shrink-0">
+                                    <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="p-2.5 bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-xl">
+                                                <BarChart3 className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold text-slate-800 dark:text-white text-lg">Analisis Tren</h4>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Pemasukan vs Pengeluaran</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 items-center">
+                                            <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl overflow-x-auto scrollbar-hide">
+                                                {(['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY', 'CUSTOM'] as const).map(filter => (
+                                                    <button
+                                                        key={filter}
+                                                        onClick={() => handleFilterChange(filter)}
+                                                        className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap active:scale-95 ${activeFilter === filter
+                                                            ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                                                            }`}
+                                                    >
+                                                        {filter === 'DAILY' ? 'Harian' : filter === 'WEEKLY' ? 'Mingguan' : filter === 'MONTHLY' ? 'Bulanan' : filter === 'YEARLY' ? 'Tahunan' : 'Custom'}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h4 className="font-bold text-slate-800 dark:text-white text-lg">Analisis Tren</h4>
-                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Pemasukan vs Pengeluaran</p>
+                                    <div className="flex items-center gap-2 text-xs bg-slate-50 dark:bg-slate-800 p-2 rounded-xl border border-slate-100 dark:border-slate-700 w-fit">
+                                        <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Range:</span>
+                                        <input type="date" value={filters.startDate} onChange={(e) => handleDateChange('start', e.target.value)} className="bg-transparent font-medium text-slate-900 dark:text-slate-100 focus:outline-none text-xs" />
+                                        <span className="text-slate-300">-</span>
+                                        <input type="date" value={filters.endDate} onChange={(e) => handleDateChange('end', e.target.value)} className="bg-transparent font-medium text-slate-900 dark:text-slate-100 focus:outline-none text-xs" />
                                     </div>
                                 </div>
-                                {/* Filters */}
-                                <div className="flex flex-wrap gap-2 items-center">
-
-                                    <div className="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl overflow-x-auto scrollbar-hide">
-                                        {(['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY', 'CUSTOM'] as const).map(filter => (
-                                            <button
-                                                key={filter}
-                                                onClick={() => handleFilterChange(filter)}
-                                                className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all whitespace-nowrap active:scale-95 ${activeFilter === filter
-                                                    ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
-                                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
-                                                    }`}
-                                            >
-                                                {filter === 'DAILY' ? 'Harian' : filter === 'WEEKLY' ? 'Mingguan' : filter === 'MONTHLY' ? 'Bulanan' : filter === 'YEARLY' ? 'Tahunan' : 'Custom'}
-                                            </button>
-                                        ))}
-                                    </div>
+                                <div className="flex-1 w-full min-h-0">
+                                    <ResponsiveContainer width="100%" height="100%">
+                                        <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                                            <defs>
+                                                <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                                </linearGradient>
+                                                <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                                                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                                                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                                </linearGradient>
+                                            </defs>
+                                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" className="stroke-slate-100 dark:stroke-slate-800" />
+                                            <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} interval={chartData.length > 10 ? 'preserveStartEnd' : 0} />
+                                            <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} tickFormatter={formatShortIDR} />
+                                            <Tooltip cursor={{ fill: 'transparent' }} content={<CustomTooltip />} />
+                                            <Legend wrapperStyle={{ paddingTop: '20px', fontSize: '12px' }} iconType="circle" />
+                                            <Bar dataKey="Pemasukan" fill="url(#colorIncome)" radius={[6, 6, 0, 0]} maxBarSize={40} animationDuration={1000} />
+                                            <Bar dataKey="Pengeluaran" fill="url(#colorExpense)" radius={[6, 6, 0, 0]} maxBarSize={40} animationDuration={1000} />
+                                        </BarChart>
+                                    </ResponsiveContainer>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 text-xs bg-slate-50 dark:bg-slate-800 p-2 rounded-xl border border-slate-100 dark:border-slate-700 w-fit">
-                                <span className="font-bold text-slate-400 uppercase tracking-wider text-[10px]">Range:</span>
-                                <input type="date" value={filters.startDate} onChange={(e) => handleDateChange('start', e.target.value)} className="bg-transparent font-medium text-slate-900 dark:text-slate-100 focus:outline-none text-xs" />
-                                <span className="text-slate-300">-</span>
-                                <input type="date" value={filters.endDate} onChange={(e) => handleDateChange('end', e.target.value)} className="bg-transparent font-medium text-slate-900 dark:text-slate-100 focus:outline-none text-xs" />
-                            </div>
-                        </div>
-                        <div className="flex-1 w-full min-h-[300px]">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                                    <defs>
-                                        <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                                        </linearGradient>
-                                        <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
-                                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                                        </linearGradient>
-                                    </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" className="stroke-slate-100 dark:stroke-slate-800" />
-                                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} dy={10} interval={chartData.length > 10 ? 'preserveStartEnd' : 0} />
-                                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 500 }} tickFormatter={formatShortIDR} />
-                                    <Tooltip
-                                        cursor={{ fill: 'transparent' }}
-                                        content={<CustomTooltip />}
-                                    />
-                                    <Legend wrapperStyle={{ paddingTop: '20px', fontSize: '12px' }} iconType="circle" />
-                                    <Bar dataKey="Pemasukan" fill="url(#colorIncome)" radius={[6, 6, 0, 0]} maxBarSize={40} animationDuration={1000} />
-                                    <Bar dataKey="Pengeluaran" fill="url(#colorExpense)" radius={[6, 6, 0, 0]} maxBarSize={40} animationDuration={1000} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </WidgetWrapper>
                     </div>
 
                     {/* Category Pie Chart */}
-                    <div className="glass-card p-6 lg:p-8 rounded-[2rem] flex flex-col transition-all hover:shadow-lg duration-500 animate-fade-in-up" style={{ animationDelay: '500ms' }}>
-                        <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2.5 bg-pink-50 dark:bg-slate-800 text-pink-600 dark:text-pink-400 rounded-xl">
-                                    <PieChartIcon className="w-5 h-5" />
-                                </div>
-                                <h4 className="font-bold text-slate-800 dark:text-white text-lg">Distribusi</h4>
-                            </div>
-                            <div className="flex items-center gap-1 text-[10px] font-bold bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-lg text-slate-500 dark:text-slate-400">
-                                <Calendar className="w-3 h-3" />
-                                Custom
-                            </div>
-                        </div>
-                        <div className="flex justify-center gap-2 mb-4">
-                            <input type="date" value={filters.pieStartDate || filters.startDate} onChange={(e) => handlePieDateChange('start', e.target.value)} className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-[10px] text-slate-500 dark:text-slate-400 px-2 py-1 outline-none" />
-                            <input type="date" value={filters.pieEndDate || filters.endDate} onChange={(e) => handlePieDateChange('end', e.target.value)} className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-[10px] text-slate-500 dark:text-slate-400 px-2 py-1 outline-none" />
-                        </div>
-                        {pieData.length > 0 ? (
-                            <>
-                                <div className="flex-1 min-h-[300px] flex items-center justify-center">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <PieChart>
-                                            <Pie data={pieData} cx="50%" cy="50%" innerRadius={80} outerRadius={110} paddingAngle={4} dataKey="value" cornerRadius={6} animationDuration={800}>
-                                                {pieData.map((_, index) => (
-                                                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} strokeWidth={0} />
-                                                ))}
-                                            </Pie>
-                                            <Tooltip content={<CustomTooltip total={totalCategoryExpense} />} />
-                                            <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '20px' }} />
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                </div>
-                            </>
-                        ) : (
-                            <div className="flex-1 flex flex-col items-center justify-center text-slate-300 dark:text-slate-600">
-                                <PieChartIcon className="w-16 h-16 mb-2 opacity-20" />
-                                <p className="text-sm font-medium">Belum ada data</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-
-                {/* Widgets Section */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Budget Watch */}
-                    <div className="glass-card p-6 rounded-[2rem] flex flex-col transition-all hover:shadow-lg duration-500 animate-fade-in-up" style={{ animationDelay: '600ms' }}>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
-                                <Target className="w-5 h-5 mr-2 text-indigo-500" /> Budget Watch
-                            </h3>
-                            <Link href={route('budgets.index')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Lihat</Link>
-                        </div>
-                        <div className="space-y-4 flex-1 overflow-y-auto scrollbar-hide">
-                            {budgetProgress.length > 0 ? (
-                                budgetProgress.map((b) => (
-                                    <div key={b.id}>
-                                        <div className="flex justify-between items-center mb-1.5">
-                                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{b.category}</span>
-                                            <span className="text-xs font-bold text-slate-500">{b.percentage}%</span>
+                    <div key="pie-chart">
+                        <WidgetWrapper>
+                            <div className="p-6 lg:p-8 flex flex-col h-full">
+                                <div className="flex items-center justify-between mb-2 shrink-0">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2.5 bg-pink-50 dark:bg-slate-800 text-pink-600 dark:text-pink-400 rounded-xl">
+                                            <PieChartIcon className="w-5 h-5" />
                                         </div>
-                                        <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                            <div className={`h-full ${getBudgetColor(b.percentage)} rounded-full transition-all duration-1000`} style={{ width: `${b.percentage}%` }} />
-                                        </div>
-                                        <div className="flex justify-between text-[10px] text-slate-400 mt-1">
-                                            <span>{formatShortIDR(b.spent)}</span>
-                                            <span>/ {formatShortIDR(b.limit)}</span>
-                                        </div>
+                                        <h4 className="font-bold text-slate-800 dark:text-white text-lg">Distribusi</h4>
                                     </div>
-                                ))
-                            ) : (
-                                <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
-                                    Belum ada anggaran
+                                    <div className="flex items-center gap-1 text-[10px] font-bold bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-lg text-slate-500 dark:text-slate-400">
+                                        <Calendar className="w-3 h-3" />
+                                        Custom
+                                    </div>
                                 </div>
-                            )}
-                        </div>
+                                <div className="flex justify-center gap-2 mb-4 shrink-0">
+                                    <input type="date" value={filters.pieStartDate || filters.startDate} onChange={(e) => handlePieDateChange('start', e.target.value)} className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-[10px] text-slate-500 dark:text-slate-400 px-2 py-1 outline-none" />
+                                    <input type="date" value={filters.pieEndDate || filters.endDate} onChange={(e) => handlePieDateChange('end', e.target.value)} className="bg-slate-50 dark:bg-slate-800 border-none rounded-lg text-[10px] text-slate-500 dark:text-slate-400 px-2 py-1 outline-none" />
+                                </div>
+                                {pieData.length > 0 ? (
+                                    <div className="flex-1 min-h-0 flex items-center justify-center">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie data={pieData} cx="50%" cy="50%" innerRadius={60} outerRadius={90} paddingAngle={4} dataKey="value" cornerRadius={6} animationDuration={800}>
+                                                    {pieData.map((_, index) => (
+                                                        <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} strokeWidth={0} />
+                                                    ))}
+                                                </Pie>
+                                                <Tooltip content={<CustomTooltip total={totalCategoryExpense} />} />
+                                                <Legend layout="horizontal" verticalAlign="bottom" align="center" iconType="circle" wrapperStyle={{ fontSize: '11px', paddingTop: '10px' }} />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                    </div>
+                                ) : (
+                                    <div className="flex-1 flex flex-col items-center justify-center text-slate-300 dark:text-slate-600">
+                                        <PieChartIcon className="w-16 h-16 mb-2 opacity-20" />
+                                        <p className="text-sm font-medium">Belum ada data</p>
+                                    </div>
+                                )}
+                            </div>
+                        </WidgetWrapper>
+                    </div>
+
+                    {/* Budget Watch */}
+                    <div key="budget-watch">
+                        <WidgetWrapper>
+                            <div className="p-6 flex flex-col h-full">
+                                <div className="flex items-center justify-between mb-4 shrink-0">
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
+                                        <Target className="w-5 h-5 mr-2 text-indigo-500" /> Budget Watch
+                                    </h3>
+                                    <Link href={route('budgets.index')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Lihat</Link>
+                                </div>
+                                <div className="space-y-4 flex-1 overflow-y-auto scrollbar-hide">
+                                    {budgetProgress.length > 0 ? (
+                                        budgetProgress.map((b) => (
+                                            <div key={b.id}>
+                                                <div className="flex justify-between items-center mb-1.5">
+                                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate">{b.category}</span>
+                                                    <span className="text-xs font-bold text-slate-500">{b.percentage}%</span>
+                                                </div>
+                                                <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                    <div className={`h-full ${getBudgetColor(b.percentage)} rounded-full transition-all duration-1000`} style={{ width: `${b.percentage}%` }} />
+                                                </div>
+                                                <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                                                    <span>{formatShortIDR(b.spent)}</span>
+                                                    <span>/ {formatShortIDR(b.limit)}</span>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
+                                            Belum ada anggaran
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </WidgetWrapper>
                     </div>
 
                     {/* Upcoming Bills */}
-                    <div className="glass-card p-6 rounded-[2rem] flex flex-col transition-all hover:shadow-lg duration-500 animate-fade-in-up" style={{ animationDelay: '700ms' }}>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
-                                <CalendarClock className="w-5 h-5 mr-2 text-amber-500" /> Tagihan Mendatang
-                            </h3>
-                            <Link href={route('debts.index')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Lihat</Link>
-                        </div>
-                        <div className="space-y-3 flex-1 overflow-y-auto scrollbar-hide">
-                            {upcomingBills.length > 0 ? (
-                                upcomingBills.map((bill) => {
-                                    const dueDate = new Date(bill.due_date);
-                                    const isOverdue = dueDate < new Date();
-                                    return (
-                                        <div key={bill.id} className={`flex items-center justify-between p-3 rounded-xl border ${isOverdue ? 'border-red-200 dark:border-red-900/50 bg-red-50/80 dark:bg-red-900/10' : 'border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50'} transition-colors`}>
-                                            <div className="flex items-center gap-3">
-                                                <div className={`w-2 h-2 rounded-full ${isOverdue ? 'bg-red-500 animate-pulse' : 'bg-amber-500'}`} />
-                                                <div>
-                                                    <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{bill.person}</p>
-                                                    <p className="text-[10px] text-slate-400">{dueDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</p>
-                                                </div>
-                                            </div>
-                                            <span className="text-sm font-bold text-red-600 dark:text-red-400">{formatShortIDR(bill.amount)}</span>
-                                        </div>
-                                    );
-                                })
-                            ) : (
-                                <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
-                                    Tidak ada tagihan
+                    <div key="upcoming-bills">
+                        <WidgetWrapper>
+                            <div className="p-6 flex flex-col h-full">
+                                <div className="flex items-center justify-between mb-4 shrink-0">
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
+                                        <CalendarClock className="w-5 h-5 mr-2 text-amber-500" /> Tagihan Mendatang
+                                    </h3>
+                                    <Link href={route('debts.index')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Lihat</Link>
                                 </div>
-                            )}
-                        </div>
+                                <div className="space-y-3 flex-1 overflow-y-auto scrollbar-hide">
+                                    {upcomingBills.length > 0 ? (
+                                        upcomingBills.map((bill) => {
+                                            const dueDate = new Date(bill.due_date);
+                                            const isOverdue = dueDate < new Date();
+                                            return (
+                                                <div key={bill.id} className={`flex items-center justify-between p-3 rounded-xl border ${isOverdue ? 'border-red-200 dark:border-red-900/50 bg-red-50/80 dark:bg-red-900/10' : 'border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50'} transition-colors`}>
+                                                    <div className="flex items-center gap-3">
+                                                        <div className={`w-2 h-2 rounded-full ${isOverdue ? 'bg-red-500 animate-pulse' : 'bg-amber-500'}`} />
+                                                        <div>
+                                                            <p className="text-sm font-bold text-slate-700 dark:text-slate-200">{bill.person}</p>
+                                                            <p className="text-[10px] text-slate-400">{dueDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</p>
+                                                        </div>
+                                                    </div>
+                                                    <span className="text-sm font-bold text-red-600 dark:text-red-400">{formatShortIDR(bill.amount)}</span>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
+                                            Tidak ada tagihan
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </WidgetWrapper>
                     </div>
 
                     {/* Recent Transactions */}
-                    <div className="glass-card p-6 rounded-[2rem] flex flex-col transition-all hover:shadow-lg duration-500 animate-fade-in-up" style={{ animationDelay: '800ms' }}>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-slate-800 dark:text-white">Transaksi Terbaru</h3>
-                            <Link href={route('transactions.index')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Lihat</Link>
-                        </div>
-                        <div className="space-y-3 flex-1 overflow-y-auto scrollbar-hide">
-                            {recentTransactions.length > 0 ? (
-                                recentTransactions.slice(0, 5).map((t) => (
-                                    <div key={t.id} className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-800 last:border-0 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30 rounded-lg px-2 -mx-2 animate-pop-in">
-                                        <div className="flex items-center gap-3">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm ${t.type === 'INCOME' ? 'bg-emerald-500' : t.type === 'TRANSFER' ? 'bg-blue-500' : 'bg-red-500'}`}>
-                                                {t.type === 'INCOME' ? <TrendingUp className="w-4 h-4" /> : t.type === 'TRANSFER' ? <ArrowRightLeft className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 line-clamp-1">{t.description}</p>
-                                                <p className="text-[10px] text-slate-400">{t.category} · {new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</p>
-                                            </div>
-                                        </div>
-                                        <span className={`text-sm font-bold ${t.type === 'INCOME' ? 'text-emerald-600 dark:text-emerald-400' : t.type === 'TRANSFER' ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
-                                            {t.type === 'INCOME' ? '+' : '-'}{formatShortIDR(t.amount)}
-                                        </span>
-                                    </div>
-                                ))
-                            ) : (
-                                <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
-                                    Belum ada transaksi
+                    <div key="recent-transactions">
+                        <WidgetWrapper>
+                            <div className="p-6 flex flex-col h-full">
+                                <div className="flex items-center justify-between mb-4 shrink-0">
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-white">Transaksi Terbaru</h3>
+                                    <Link href={route('transactions.index')} className="text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline">Lihat</Link>
                                 </div>
-                            )}
-                        </div>
+                                <div className="space-y-3 flex-1 overflow-y-auto scrollbar-hide">
+                                    {recentTransactions.length > 0 ? (
+                                        recentTransactions.slice(0, 5).map((t) => (
+                                            <div key={t.id} className="flex items-center justify-between py-2 border-b border-slate-50 dark:border-slate-800 last:border-0 transition-colors hover:bg-slate-50/50 dark:hover:bg-slate-800/30 rounded-lg px-2 -mx-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-sm ${t.type === 'INCOME' ? 'bg-emerald-500' : t.type === 'TRANSFER' ? 'bg-blue-500' : 'bg-red-500'}`}>
+                                                        {t.type === 'INCOME' ? <TrendingUp className="w-4 h-4" /> : t.type === 'TRANSFER' ? <ArrowRightLeft className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                                                    </div>
+                                                    <div>
+                                                        <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 line-clamp-1">{t.description}</p>
+                                                        <p className="text-[10px] text-slate-400">{t.category} · {new Date(t.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</p>
+                                                    </div>
+                                                </div>
+                                                <span className={`text-sm font-bold ${t.type === 'INCOME' ? 'text-emerald-600 dark:text-emerald-400' : t.type === 'TRANSFER' ? 'text-blue-600 dark:text-blue-400' : 'text-red-600 dark:text-red-400'}`}>
+                                                    {t.type === 'INCOME' ? '+' : '-'}{formatShortIDR(t.amount)}
+                                                </span>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="flex items-center justify-center flex-1 text-slate-400 text-sm py-8">
+                                            Belum ada transaksi
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </WidgetWrapper>
                     </div>
 
                     {/* Top Expense Tags */}
-                    <div className="glass-card p-6 rounded-[2rem] flex flex-col transition-all hover:shadow-lg duration-500 animate-fade-in-up" style={{ animationDelay: '900ms' }}>
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
-                                <TagIcon className="w-5 h-5 mr-2 text-violet-500" /> Fokus Pengeluaran
-                            </h3>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Bulan Ini</span>
-                        </div>
-                        <div className="space-y-4 flex-1">
-                            {topTags.length > 0 ? (
-                                topTags.map((tag, idx) => {
-                                    const tagColor = tag.color || ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6'][idx % 5];
-                                    return (
-                                        <div key={tag.name}>
-                                            <div className="flex justify-between items-center mb-1.5">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: tagColor }} />
-                                                    <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[140px]">{tag.name}</span>
-                                                </div>
-                                                <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{formatShortIDR(tag.total)}</span>
-                                            </div>
-                                            <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-                                                <div
-                                                    className="h-full rounded-full transition-all duration-1000 ease-out"
-                                                    style={{ width: `${tag.percentage}%`, backgroundColor: tagColor }}
-                                                />
-                                            </div>
-                                            <div className="flex justify-end mt-0.5">
-                                                <span className="text-[10px] text-slate-400 font-bold">{tag.percentage}%</span>
-                                            </div>
-                                        </div>
-                                    );
-                                })
-                            ) : (
-                                <div className="flex flex-col items-center justify-center flex-1 text-slate-300 dark:text-slate-600 py-8">
-                                    <TagIcon className="w-12 h-12 mb-2 opacity-20" />
-                                    <p className="text-sm font-medium">Belum ada pengeluaran bertag bulan ini</p>
+                    <div key="top-tags">
+                        <WidgetWrapper>
+                            <div className="p-6 flex flex-col h-full">
+                                <div className="flex items-center justify-between mb-4 shrink-0">
+                                    <h3 className="text-lg font-bold text-slate-800 dark:text-white flex items-center">
+                                        <TagIcon className="w-5 h-5 mr-2 text-violet-500" /> Fokus Pengeluaran
+                                    </h3>
+                                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Bulan Ini</span>
                                 </div>
-                            )}
-                        </div>
+                                <div className="space-y-4 flex-1 overflow-y-auto scrollbar-hide">
+                                    {topTags.length > 0 ? (
+                                        topTags.map((tag, idx) => {
+                                            const tagColor = tag.color || ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#8b5cf6'][idx % 5];
+                                            return (
+                                                <div key={tag.name}>
+                                                    <div className="flex justify-between items-center mb-1.5">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: tagColor }} />
+                                                            <span className="text-sm font-semibold text-slate-700 dark:text-slate-200 truncate max-w-[140px]">{tag.name}</span>
+                                                        </div>
+                                                        <span className="text-xs font-bold text-slate-700 dark:text-slate-200">{formatShortIDR(tag.total)}</span>
+                                                    </div>
+                                                    <div className="h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                                                        <div
+                                                            className="h-full rounded-full transition-all duration-1000 ease-out"
+                                                            style={{ width: `${tag.percentage}%`, backgroundColor: tagColor }}
+                                                        />
+                                                    </div>
+                                                    <div className="flex justify-end mt-0.5">
+                                                        <span className="text-[10px] text-slate-400 font-bold">{tag.percentage}%</span>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center flex-1 text-slate-300 dark:text-slate-600 py-8">
+                                            <TagIcon className="w-12 h-12 mb-2 opacity-20" />
+                                            <p className="text-sm font-medium">Belum ada pengeluaran bertag bulan ini</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </WidgetWrapper>
                     </div>
-                </div>
+                </DashboardGrid>
             </div>
 
             {/* Modern Add Transaction Modal */}

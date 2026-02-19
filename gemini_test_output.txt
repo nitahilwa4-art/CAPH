@@ -1,0 +1,2 @@
+Testing gemini-3-flash-preview ... SUCCESS!
+Result: Hello! How can I help you today?

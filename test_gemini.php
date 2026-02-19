@@ -9,7 +9,7 @@ $kernel->bootstrap();
 use Gemini\Laravel\Facades\Gemini;
 
 $candidates = [
-    'gemini-3-flash-preview', 
+    'gemini-3-flash-preview',
     'gemini-3-pro-preview',
     'gemini-experimental'
 ];
@@ -17,14 +17,17 @@ $candidates = [
 echo "API Key: " . substr(env('GEMINI_API_KEY'), 0, 5) . "...\n";
 
 foreach ($candidates as $model) {
-    echo "Testing $model ... ";
+    if ($model !== 'gemini-3-flash-preview')
+        continue;
+
+    $log = "Testing $model ... ";
     try {
         $result = Gemini::generativeModel($model)->generateContent('Hi');
-        echo "SUCCESS!\n";
-    } catch (\Exception $e) {
-        $msg = $e->getMessage();
-        if (strpos($msg, '404') !== false) echo "NOT FOUND\n";
-        elseif (strpos($msg, '429') !== false) echo "RATE LIMIT\n";
-        else echo "ERROR: $msg\n";
+        $log .= "SUCCESS!\nResult: " . $result->text() . "\n";
     }
+    catch (\Exception $e) {
+        $log .= "ERROR: " . $e->getMessage() . "\n";
+    }
+    file_put_contents('gemini_test_output.txt', $log);
+    echo $log;
 }
