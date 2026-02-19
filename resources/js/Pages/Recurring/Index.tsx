@@ -49,13 +49,17 @@ interface Props extends PageProps {
     dueBills: RecurringTransaction[];
     wallets: Wallet[];
     categories: Category[];
+    debug_categories_json?: string;
 }
 
-export default function RecurringIndex({ auth, recurringTransactions, dueBills, wallets, categories }: Props) {
+export default function RecurringIndex({ auth, recurringTransactions, dueBills, wallets, categories, debug_categories_json }: Props) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isProcessModalOpen, setIsProcessModalOpen] = useState(false);
     const [selectedRecurring, setSelectedRecurring] = useState<RecurringTransaction | null>(null);
+
+    // DEBUG: Check props
+    // console.log('Categories:', categories);
 
     // Form for Create/Edit
     const { data, setData, post, put, delete: destroy, processing, errors, reset, clearErrors } = useForm({
@@ -144,7 +148,7 @@ export default function RecurringIndex({ auth, recurringTransactions, dueBills, 
     };
 
     // Filter categories based on type
-    const availableCategories = categories.filter(c => c.type === data.type);
+    const availableCategories = (categories || []).filter(c => c.type.toUpperCase() === data.type.toUpperCase());
 
     const formatCurrency = (amount: number) => {
         return new Intl.NumberFormat('id-ID', {
@@ -177,6 +181,8 @@ export default function RecurringIndex({ auth, recurringTransactions, dueBills, 
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+
 
                     {/* DUE BILLS WIDGET */}
                     {dueBills.length > 0 && (
@@ -349,6 +355,24 @@ export default function RecurringIndex({ auth, recurringTransactions, dueBills, 
 
                         <div>
                             <InputLabel htmlFor="category" value="Kategori" />
+
+                            {/* EMERGENCY DEBUG UI */}
+                            <div className="p-2 mb-2 bg-red-100 border border-red-400 rounded">
+                                <p className="text-xs font-bold text-red-700 mb-1">DATA DEBUG (Screenshot ini jika error):</p>
+                                <div className="text-[10px] font-mono p-1 bg-white border h-20 overflow-auto mb-2">
+                                    {debug_categories_json || 'NO DATA FROM BACKEND'}
+                                </div>
+                                <label className="text-xs font-bold">Emergency Dropdown (JSON Source):</label>
+                                <select className="block w-full text-sm border-red-300 rounded" onChange={(e) => setData('category', e.target.value)}>
+                                    <option value="">Pilih dari Emergency...</option>
+                                    {(JSON.parse(debug_categories_json || '[]') as Category[]).map(cat => (
+                                        <option key={'emerg-' + cat.id} value={cat.name}>
+                                            {cat.name} ({cat.type})
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
                             <select
                                 id="category"
                                 value={data.category}
@@ -357,9 +381,13 @@ export default function RecurringIndex({ auth, recurringTransactions, dueBills, 
                                 required
                             >
                                 <option value="">Pilih Kategori</option>
-                                {availableCategories.map(cat => (
-                                    <option key={cat.id} value={cat.name}>{cat.name}</option>
-                                ))}
+                                {availableCategories.length > 0 ? (
+                                    availableCategories.map(cat => (
+                                        <option key={cat.id} value={cat.name}>{cat.name}</option>
+                                    ))
+                                ) : (
+                                    <option value="" disabled>Tidak ada kategori {data.type === 'INCOME' ? 'Pemasukan' : data.type === 'EXPENSE' ? 'Pengeluaran' : 'Transfer'}</option>
+                                )}
                             </select>
                             <InputError message={errors.category} className="mt-2" />
                         </div>

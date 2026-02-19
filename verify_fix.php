@@ -1,31 +1,27 @@
+<?php
+// Bootstrap Laravel
+require __DIR__ . '/vendor/autoload.php';
+$app = require_once __DIR__ . '/bootstrap/app.php';
+$kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
+$kernel->bootstrap();
 
-try {
-    $user = App\Models\User::first();
-    if (!$user) {
-        $user = App\Models\User::factory()->create();
-    }
+use App\Models\Category;
+use App\Models\User;
 
-    echo "Using User ID: " . $user->id . PHP_EOL;
+$user = User::first();
+if (!$user)
+    exit("No user found.\n");
 
-    $vehicle = App\Models\Asset::create([
-        'user_id' => $user->id,
-        'name' => 'Test Vehicle',
-        'value' => 50000000,
-        'type' => 'VEHICLE'
-    ]);
-    echo "SUCCESS: Created asset with type VEHICLE. ID: " . $vehicle->id . PHP_EOL;
-    $vehicle->delete();
+echo "User ID: " . $user->id . "\n";
 
-    $investment = App\Models\Asset::create([
-        'user_id' => $user->id,
-        'name' => 'Test Investment',
-        'value' => 1000000,
-        'type' => 'INVESTMENT'
-    ]);
-    echo "SUCCESS: Created asset with type INVESTMENT. ID: " . $investment->id . PHP_EOL;
-    $investment->delete();
+// SIMULATE DEBT CONTROLLER LOGIC (New)
+$categories = Category::userCategories($user->id)->get();
+echo "Total Categories (Fixed Logic): " . $categories->count() . "\n";
+echo "Default Categories: " . $categories->where('is_default', true)->count() . "\n";
 
+if ($categories->where('is_default', true)->count() > 0) {
+    echo "SUCCESS: Default categories are now included.\n";
 }
-catch (\Exception $e) {
-    echo "ERROR: " . $e->getMessage() . PHP_EOL;
+else {
+    echo "FAILURE: Still no default categories.\n";
 }

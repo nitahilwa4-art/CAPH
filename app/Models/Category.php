@@ -38,7 +38,8 @@ class Category extends Model
     {
         return $query->where(function ($q) use ($userId) {
             $q->where('is_default', true)
-              ->orWhere('user_id', $userId);
+                ->orWhereNull('user_id') // Fallback for system categories
+                ->orWhere('user_id', $userId);
         });
     }
 

@@ -40,13 +40,18 @@ class RecurringTransactionController extends Controller
             ->get();
 
         $wallets = Wallet::where('user_id', $user->id)->get();
-        $categories = Category::userCategories($user->id)->get();
+
+        $categories = Category::userCategories($user->id)
+            ->orderBy('type')
+            ->orderBy('name')
+            ->get();
 
         return Inertia::render('Recurring/Index', [
             'recurringTransactions' => $recurring,
             'dueBills' => $dueBills,
             'wallets' => $wallets,
             'categories' => $categories,
+            'debug_categories_json' => json_encode($categories->toArray()), // Round 6 Debug
         ]);
     }
 
