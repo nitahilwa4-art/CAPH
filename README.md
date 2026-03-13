@@ -1,59 +1,352 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CAPH
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+CAPH adalah aplikasi manajemen keuangan berbasis web yang dibangun dengan Laravel, Inertia.js, React, dan TypeScript. Aplikasi ini dirancang untuk membantu pengguna mencatat transaksi, memantau cashflow, mengelola budget, hutang/piutang, aset, transaksi rutin, serta mendapatkan insight berbasis AI dari data keuangan mereka.
 
-## About Laravel
+## Fitur Utama
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 1. Dashboard Keuangan
+- Ringkasan saldo, pemasukan, pengeluaran, dan net flow
+- Grafik tren pemasukan vs pengeluaran
+- Distribusi pengeluaran per kategori
+- Budget watch / progress anggaran
+- Transaksi terbaru
+- Fokus pengeluaran berdasarkan tag
+- Upcoming bills dan recurring transactions
+- Layout dashboard yang bisa diatur ulang
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 2. Manajemen Transaksi
+- Tambah, ubah, hapus transaksi
+- Mendukung tipe:
+  - `INCOME`
+  - `EXPENSE`
+  - `TRANSFER`
+- Filter berdasarkan tipe, tanggal, tag, dan pencarian
+- Relasi ke wallet dan tag
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 3. Smart Entry (AI Input)
+- Input transaksi dengan bahasa natural
+- AI akan mem-parsing deskripsi menjadi transaksi terstruktur
+- Cocok untuk input cepat seperti:
+  - `beli nasi goreng 25rb, kopi 10rb, bensin 50rb`
+  - `terima gaji 5 juta`
 
-## Learning Laravel
+### 4. AI Financial Insights
+- Analisis kondisi keuangan berdasarkan transaksi
+- Health score keuangan
+- Cashflow summary
+- Dana darurat ideal
+- Spending alerts
+- Action plan / rekomendasi
+- Proyeksi goal berdasarkan profil finansial
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 5. Wallet Management
+- Kelola banyak dompet / akun
+- Saldo ter-update mengikuti transaksi
+- Mendukung perpindahan dana antar wallet
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 6. Budget Management
+- Tetapkan limit pengeluaran per kategori
+- Pantau progres budget mingguan, bulanan, atau tahunan
+- Trigger notifikasi saat mendekati / melewati limit
 
-## Laravel Sponsors
+### 7. Debt / Receivable / Bills
+- Catat hutang, piutang, dan tagihan
+- Pantau jatuh tempo
+- Tandai status lunas / belum lunas
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 8. Asset Management
+- Kelola data aset pengguna
+- Memisahkan aset dari transaksi harian
 
-### Premium Partners
+### 9. Recurring Transactions
+- Buat transaksi rutin harian, mingguan, bulanan, atau tahunan
+- Cocok untuk langganan, cicilan, dan tagihan berkala
+- Mendukung mode manual maupun otomatis
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 10. Export Laporan
+- Preview data export
+- Download laporan dalam format:
+  - Excel (`.xlsx`)
+  - PDF (`.pdf`)
 
-## Contributing
+### 11. Admin Panel
+- Dashboard admin
+- Manajemen user
+- Monitoring log sistem
+- Master data kategori
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Teknologi yang Digunakan
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Backend
+- PHP 8.2+
+- Laravel 12
+- Laravel Sanctum
+- Inertia.js (Laravel adapter)
+- DomPDF
+- Laravel Excel
+- Sentry Laravel
 
-## Security Vulnerabilities
+### Frontend
+- React 18
+- TypeScript
+- Inertia.js React
+- Tailwind CSS
+- Vite
+- Recharts
+- Lucide React
+- React Hot Toast
+- React Grid Layout
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### AI / Integrasi
+- Google Gemini
+- Groq
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Arsitektur Singkat
+
+Aplikasi menggunakan pola Laravel monolith modern:
+- **Laravel** menangani routing, autentikasi, validasi, ORM, dan business logic backend
+- **Inertia.js** menjadi jembatan antara Laravel dan React
+- **React + TypeScript** menangani UI interaktif di sisi frontend
+- **Service layer** dipakai untuk logika tertentu seperti transaksi dan AI
+
+Beberapa service penting:
+- `TransactionService` → logika perubahan saldo & transaksi
+- `GeminiService` → AI financial insights
+- `GroqService` → parsing natural language untuk smart entry
+
+---
+
+## Struktur Fitur Utama
+
+```text
+app/
+  Http/Controllers/
+    DashboardController.php
+    TransactionController.php
+    SmartEntryController.php
+    InsightsController.php
+    WalletController.php
+    BudgetController.php
+    DebtController.php
+    AssetController.php
+    CategoryController.php
+    ExportController.php
+    RecurringTransactionController.php
+    Admin/
+
+  Models/
+    User.php
+    Wallet.php
+    Transaction.php
+    Budget.php
+    Debt.php
+    Asset.php
+    Category.php
+    RecurringTransaction.php
+    FinancialInsight.php
+    Tag.php
+
+  Services/
+    TransactionService.php
+    GeminiService.php
+    GroqService.php
+
+resources/js/
+  Pages/
+    Dashboard.tsx
+    Transactions/
+    Wallets/
+    Budgets/
+    Debts/
+    Assets/
+    SmartEntry/
+    Insights/
+    Export/
+    Recurring/
+    Admin/
+```
+
+---
+
+## Cara Menjalankan Project
+
+### 1. Clone repository
+```bash
+git clone <repo-url>
+cd CAPH
+```
+
+### 2. Install dependency backend
+```bash
+composer install
+```
+
+### 3. Install dependency frontend
+```bash
+npm install
+```
+
+### 4. Copy file environment
+```bash
+cp .env.example .env
+```
+
+> Untuk Windows, bisa copy manual `.env.example` menjadi `.env` jika diperlukan.
+
+### 5. Generate app key
+```bash
+php artisan key:generate
+```
+
+### 6. Setup database
+Sesuaikan konfigurasi database di file `.env`, lalu jalankan:
+
+```bash
+php artisan migrate
+```
+
+Jika butuh data awal, jalankan seeder sesuai kebutuhan project.
+
+### 7. Jalankan aplikasi
+Untuk development, jalankan backend dan frontend.
+
+#### Opsi A — terpisah
+```bash
+php artisan serve
+npm run dev
+```
+
+#### Opsi B — pakai script composer
+```bash
+composer run dev
+```
+
+Script ini menjalankan beberapa proses sekaligus, termasuk:
+- Laravel server
+- queue listener
+- log watcher
+- Vite dev server
+
+---
+
+## Build Production
+
+```bash
+npm run build
+```
+
+Command ini akan:
+- compile TypeScript
+- build frontend client
+- build SSR bundle
+
+---
+
+## Konfigurasi Environment Penting
+
+Beberapa environment variable yang kemungkinan perlu diisi:
+
+```env
+APP_NAME=CAPH
+APP_ENV=local
+APP_KEY=
+APP_DEBUG=true
+APP_URL=http://localhost
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=caph
+DB_USERNAME=root
+DB_PASSWORD=
+
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.5-flash
+
+GROQ_API_KEY=
+GROQ_MODEL=
+
+VITE_APP_NAME="CAPH"
+VITE_SENTRY_DSN_PUBLIC=
+```
+
+> Nama variabel Groq bisa mengikuti isi `config/services.php` pada project ini.
+
+---
+
+## Modul Utama Aplikasi
+
+### Dashboard
+Pusat ringkasan keuangan pengguna, menampilkan statistik utama, chart, budget progress, transaksi terbaru, dan indikator pengeluaran.
+
+### Transactions
+Modul CRUD transaksi dengan dukungan wallet, transfer, kategori, dan tag.
+
+### Smart Entry
+Input transaksi menggunakan bahasa natural yang diproses AI menjadi data terstruktur.
+
+### Insights
+Analisis AI untuk mengevaluasi kesehatan finansial pengguna berdasarkan histori transaksi dan profil finansial.
+
+### Export
+Generate laporan transaksi dalam bentuk preview, Excel, dan PDF.
+
+### Admin
+Area khusus admin untuk memantau sistem dan mengelola data dasar.
+
+---
+
+## Catatan Pengembangan
+
+Saat ini project sudah memiliki fondasi yang kuat dan fitur yang cukup lengkap, namun masih ideal untuk terus dirapikan di area berikut:
+- konsistensi route dan integrasi fitur
+- pembersihan file debug / patch sementara
+- pemecahan komponen frontend besar menjadi komponen yang lebih kecil
+- penambahan automated test untuk transaksi, wallet balance, dan recurring flow
+- dokumentasi deployment dan environment yang lebih lengkap
+
+---
+
+## Testing
+
+Jalankan test Laravel dengan:
+
+```bash
+php artisan test
+```
+
+Atau:
+
+```bash
+composer test
+```
+
+---
+
+## Tujuan Produk
+
+CAPH bukan sekadar aplikasi catat pemasukan dan pengeluaran. Tujuannya adalah menjadi asisten keuangan yang membantu pengguna:
+- mencatat transaksi dengan cepat
+- memahami pola cashflow
+- menjaga budget tetap sehat
+- mengelola komitmen rutin
+- mengambil keputusan finansial dengan bantuan AI
+
+---
+
+## Status Dokumentasi
+
+README ini sudah disesuaikan dengan struktur dan fitur aplikasi saat ini, namun masih bisa diperbarui lagi setelah:
+- route recurring dirapikan penuh
+- alur admin distabilkan
+- dokumentasi deployment/production ditambahkan
+
+---
+
+## Lisensi
+
+Project ini mengikuti lisensi yang ditentukan oleh pemilik repository. Jika belum ditentukan, tambahkan file `LICENSE` sesuai kebutuhan.
